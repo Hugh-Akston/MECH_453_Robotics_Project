@@ -1,0 +1,33 @@
+#+TITLE: Project Pseudocode 
+#+AUTHOR: Luke Freyhof
+
+* What needs to be accomplished by the robot?
+  1. User sets up the whiteboard
+  2. User places the robot near the whiteboard
+  3. User plugs the robot in to the computer and power supply
+  4. User uploads the Arduino sketch to the robot
+  5. User types in a math expression like “4+2” into the serial monitor and then presses enter on their keyboard
+  6. The Arduino takes in the math expression and converts it into code that is understandable by the Arduino
+  7. The Arduino computes the answer to the “converted” mathematical expression
+  8. The Arduino sends a message to the robot arm and causes the arm to move toward the whiteboard into the writing position for the first number
+  9. The Arduino sends another message to robot arm telling it to write the first digit of the answer to the mathematical expression
+  10. The robot arm writes the first digit and then moves back away from the board into the “home” position.
+  11. If there is a second digit that needs to be written, the Arduino tells the robot arm to move from the home position to the board in the second position.
+  12. The Arduino sends a message to the robot arm telling it to write the second digit of the answer
+  13. The robot arm writes the second digit of the answer
+  14. The robot arm returns to the home position
+  15. The Arduino prints to the serial monitor a message telling the user that the answer has been written out
+  16. If the user wants to use The Math Robot to solve another equation, they will need to erase the whiteboard manually and then send another message into the serial monitor 
+
+* Supported Mathematical Functions 
+| Function       | User Input Symbol | Arduino Syntax |
+|----------------+-------------------+----------------|
+| Addition       | +                 | +              |
+| Subtraction    | -                 | -              |
+| Multiplication | *                 | *              |
+| Division       | /                 | /              |
+
+* Helpful Online Resources
+  + https://www.norwegiancreations.com/2018/02/creating-a-command-line-interface-in-arduinos-serial-monitor/
+  + https://forum.arduino.cc/t/serial-input-basics-updated/382007
+
