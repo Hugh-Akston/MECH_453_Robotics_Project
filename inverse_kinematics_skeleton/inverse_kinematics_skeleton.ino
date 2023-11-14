@@ -1,3 +1,7 @@
+// Written By: Dr. Eric Markvicka
+// Modified By: Luke Freyhof
+// Purpose: This file serves as a guideline for implementing inverse kinematics in the robot arm for MECH 453/853
+
 #include <Wire.h>
 #include <math.h>
 #include <Adafruit_PWMServoDriver.h>
