@@ -30,12 +30,32 @@
 * Helpful Online Resources
   + https://www.norwegiancreations.com/2018/02/creating-a-command-line-interface-in-arduinos-serial-monitor/
   + https://forum.arduino.cc/t/serial-input-basics-updated/382007
+  + https://www.programmingelectronics.com/dtostrf/
+    Convert float to string
 * Pseudocode
-** Function for computing math expression results
-** Function for interpreting input from user and converting it to Arduino code
-** Function for calling number drawing functions
-** Function for creating and setting waypoints between key coordinates
-** Function for inputing key coordinates and waypoints into the IK formulas to find a set of joint angles that the robot arm needs to move though
-** Function for safely positioning robot arm at the starting point each symbol
-** Function for safely moving robot arm back to the home position
-
+** What functions do we need?
+*** Function for computing math expression results
+*** Function for interpreting input from user and converting it to Arduino code
+*** Function for deciding which characters to draw
+    1. Convert the float to a string
+       Use dtostrf function
+       1. dtostrf(float_value, min_width, num_digits_after_decimal, where_to_store_string)
+	  float_value = This is the computed answer to the math expression
+	  min_width = 1 (This doesn't really matter for our purposes.  The values will almost always be larger than this.)
+	  num_digits_after_decimal = 2
+	  where_to_store_string = whatever output variable name we decide
+    2. Break the string up with the substring function
+    3. Check the first value of the substring
+       If it is a number, then the first thing that we need to draw is a + sign
+       If it is a -, then the first thing that we need to draw is a - sign
+*** Function for calling number drawing functions
+*** Function for creating and setting waypoints between key coordinates
+*** Function for setting desired velocities at the waypoints (use analytical jacobian)
+*** Function for inputing key coordinates and waypoints into the IK formulas to find a set of joint angles that the robot arm needs to move though
+*** Function for safely positioning robot arm at the starting point each symbol
+*** Function for safely moving robot arm back to the home position
+*** Dr. M's plotting function
+    First find the points that need to be drawn between
+    Next take the inverse kinematics between teh waypoints to find the initial and final joint angle values
+    Then set the velocity at the tip of the robot at each waypoint
+    Then set the velocity of the joints at the end points
