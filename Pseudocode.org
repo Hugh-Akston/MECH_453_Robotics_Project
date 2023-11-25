@@ -49,7 +49,23 @@
        If it is a number, then the first thing that we need to draw is a + sign
        If it is a -, then the first thing that we need to draw is a - sign
 *** Function for calling number drawing functions
+    1. Check the variable for the first digit in the answer string with a switch case function
+       Use a case for each possible digit (0 - 9)
+    2. Example Case: 0
+       1. 
 *** Function for creating and setting waypoints between key coordinates
+Inspiration MATLAB Code
+-----------------------
+%% line 
+n = 4;
+x = linspace(-3, -2.5, n);
+m = 0;
+y_int = 1;
+y = m*x+y_int;
+-----------------------
+    1. Set a variable for the number of points from point A to B inclusive of the endpoints A and B
+       1. linspace will need to be implemented manually in Arduino, because there isn't a built in function for it.
+*** Function for finding the corresponding theta values for the cartesian coordinate values using inverse kinematics
 *** Function for setting desired velocities at the waypoints (use analytical jacobian)
 *** Function for inputing key coordinates and waypoints into the IK formulas to find a set of joint angles that the robot arm needs to move though
 *** Function for safely positioning robot arm at the starting point each symbol
