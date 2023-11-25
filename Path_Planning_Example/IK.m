@@ -1,3 +1,8 @@
+%% Author Information
+% Written By: Dr. Eric Markvicka
+% Modified By: Luke Freyhof
+% Date: November 25, 2023
+
 function [t1,t2] = IK(l1,l2,x,y)
 % IK
 r = sqrt(x.^2 + y.^2);

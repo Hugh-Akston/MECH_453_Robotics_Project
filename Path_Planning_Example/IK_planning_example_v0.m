@@ -1,3 +1,8 @@
+%% Author Information
+% Written By: Dr. Eric Markvicka
+% Modified By: Luke Freyhof
+% Date: November 25, 2023
+
 clc
 clear all 
 close all

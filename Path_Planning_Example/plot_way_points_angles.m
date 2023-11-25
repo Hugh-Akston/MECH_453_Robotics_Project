@@ -1,3 +1,8 @@
+%% Author Information
+% Written By: Dr. Eric Markvicka
+% Modified By: Luke Freyhof
+% Date: November 25, 2023
+
 function [] = plot_way_points_angle(theta, time, v_vals)
 
 for i = 1:size(theta,1)

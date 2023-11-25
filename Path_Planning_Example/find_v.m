@@ -1,3 +1,8 @@
+%% Author Information
+% Written By: Dr. Eric Markvicka
+% Modified By: Luke Freyhof
+% Date: November 25, 2023
+
 function [outputArg1,outputArg2] = find_v(l1,l2,t1_val,t2_val)
 
 syms t1 t2 l1 l2 'real'

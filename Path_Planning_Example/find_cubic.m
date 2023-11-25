@@ -1,3 +1,8 @@
+%% Author Information
+% Written By: Dr. Eric Markvicka
+% Modified By: Luke Freyhof
+% Date: November 25, 2023
+
 function [a] = find_cubic(time_1,time_f,t1,t2,v0,vf)
 
 % coefficients 

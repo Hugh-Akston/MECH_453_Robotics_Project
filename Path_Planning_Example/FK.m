@@ -1,3 +1,8 @@
+%% Author Information
+% Written By: Dr. Eric Markvicka
+% Modified By: Luke Freyhof
+% Date: November 25, 2023
+
 function [x,y] = FK(l1,l2,t1,t2)
 c = @cos; 
 s = @sin; 
