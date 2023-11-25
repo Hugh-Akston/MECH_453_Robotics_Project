@@ -7,26 +7,40 @@ clc
 clear all 
 close all
 
-l1 = 2;
-l2 = 2;
+d1 = 110;
+l2 = 105;
+l3 = 150;
 
 c = @cos; 
 s = @sin; 
 
-%% line 
-n = 4;
-x = linspace(-3, -2.5, n);
-m = 0;
-y_int = 1;
-y = m*x+y_int;
+%% Whiteboard Points
+points = zeros(15, 4);
+points(:, 1) = linspace(1, length(points), length(points)); % Point index number
+points(:, 2) = [77.5; 67.5; 67.5; 57.5; 47.5; 47.5; 47.5; 17.5; 17.5; 17.5; 7.5; 7.5; 2.5; 2.5; 7.5]; % X coordinates of whiteboard points
+points(:, 3) = 56; % Y coordinates of whiteboard points
+points(:, 4) = [305; 315; 295; 305; 335; 305; 275; 335; 305; 275; 280; 275; 280; 275; 305]; % Z coordinates of whiteboard points
 
-x = [x -1];
-y = [y -1];
-n = 5;
+%% Character Points
+six_index = [8 5 6 7 10 9 6]; % Points index for 6
+six_points = zeros(length(six_index), 3);
+for i = 1:length(six_index)
+    six_points(i, 1) = points(six_index(i), 2);
+    six_points(i, 2) = points(six_index(i), 3);
+    six_points(i, 3) = points(six_index(i), 4);
+end
+
+%% line 
+% n = 4;
+% x = linspace(-3, -2.5, n);
+% m = 0;
+% y_int = 1;
+% y = m*x+y_int;
+
 
 %% IK way points
-[t1,t2] = IK(l1,l2,x,y);
-theta = [t1; t2];
+[t1,t2,t3] = IK(d1,l2,l3,x,y,z);
+theta = [t1; t2; t3];
 
 v_vals = zeros(size(theta));
 

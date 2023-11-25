@@ -14,7 +14,7 @@ c = @cos;
 s = @sin; 
 
 %% line 
-n = 10;
+n = 3;
 x = linspace(-3, 3, n);
 m = 0;
 y_int = 1;
@@ -28,8 +28,8 @@ v_vals = zeros(size(theta));
 
 %v_vals(:,2:n-1) = -0.5;
 
-v_vals(1,2:n-1) = -1;
-v_vals(2,2:n-1) = 0.5;
+v_vals(1,2:n-1) = 1;
+v_vals(2,2:n-1) = 0;
 
 % time_vals = [0];
 for i = 2:n
