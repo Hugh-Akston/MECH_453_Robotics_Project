@@ -25,9 +25,9 @@ points(:, 4) = [305; 315; 295; 305; 335; 305; 275; 335; 305; 275; 280; 275; 280;
 six_index = [8 5 6 7 10 9 6]; % Points index for 6
 six_points = zeros(length(six_index), 3);
 for i = 1:length(six_index)
-    six_points(i, 1) = points(six_index(i), 2);
-    six_points(i, 2) = points(six_index(i), 3);
-    six_points(i, 3) = points(six_index(i), 4);
+    six_points(i, 1) = points(six_index(i), 2); % Create the x column of the list of points used to draw the character
+    six_points(i, 2) = points(six_index(i), 3); % Create the y column of the list of points used to draw the character
+    six_points(i, 3) = points(six_index(i), 4); % Create the z column of the list of points used to draw the character
 end
 
 %% line 
@@ -37,10 +37,43 @@ end
 % y_int = 1;
 % y = m*x+y_int;
 
+%% Waypoint Generation
+n = 4;
+six_waypoints = zeros(length(six_points) + (n - 2)*(length(six_points) - 1), 3); % Preallocate size of coordinates array including waypoints
+
+for i = 1:length(six_points - 1)
+    six_waypoints((i + (i - 1)*(n - 2)), 1) = six_points(i, 1); % Assign the original coordinate values to the x column in the waypoints array.  This spreads out the original points and leaves space for the new waypoints.
+    six_waypoints((i + (i - 1)*(n - 2)), 2) = six_points(i, 2); % Assign the original coordinate values to the y column in the waypoints array.  This spreads out the original points and leaves space for the new waypoints.
+    six_waypoints((i + (i - 1)*(n - 2)), 3) = six_points(i, 3); % Assign the original coordinate values to the z column in the waypoints array.  This spreads out the original points and leaves space for the new waypoints.
+end
+
+x_increment = zeros(length(six_points) - 1); % Preallocate the size for the x_increment vector
+y_increment = zeros(length(six_points) - 1); % Preallocate the size for the y_increment vector
+z_increment = zeros(length(six_points) - 1); % Preallocate the size for the z_increment vector
+for i = 1:length(six_points) - 1
+    x_increment(i) = (six_points(i+1, 1) - six_points(i, 1))/(n - 1); % Find the distance that should be between each set of waypoints
+    for j = 1:(n - 2)
+        six_waypoints((i + (i - 1)*(n - 2)) + j, 1) = six_points(i, 1) + j*(x_increment(i)); % Add the waypoints between the original values into the waypoint array
+    end
+
+    y_increment(i) = (six_points(i+1, 2) - six_points(i, 2))/(n - 1); % Find the distance that should be between each set of waypoints
+    for j = 1:(n - 2)
+        six_waypoints((i + (i - 1)*(n - 2)) + j, 2) = six_points(i, 2) + j*(y_increment(i)); % Add the waypoints between the original values into the waypoint array
+    end
+
+    z_increment(i) = (six_points(i+1, 3) - six_points(i, 3))/(n - 1); % Find the distance that should be between each set of waypoints
+    for j = 1:(n - 2)
+        six_waypoints((i + (i - 1)*(n - 2)) + j, 3) = six_points(i, 3) + j*(z_increment(i)); % Add the waypoints between the original values into the waypoint array
+    end
+end
 
 %% IK way points
-[t1,t2,t3] = IK(d1,l2,l3,x,y,z);
-theta = [t1; t2; t3];
+x = six_waypoints(:, 1); % Extract the x values from the waypoints array
+y = six_waypoints(:, 2); % Extract the y values from the waypoints array
+z = six_waypoints(:, 3); % Extract the z values from the waypoints array
+
+[t1,t2,t3] = IK(d1,l2,l3,x,y,z); % Find the corresponding joint angles for the cartesian coordinate points in the waypoints array
+theta = [t1 t2 t3]; % Combine the joint angles into one array
 
 v_vals = zeros(size(theta));
 
