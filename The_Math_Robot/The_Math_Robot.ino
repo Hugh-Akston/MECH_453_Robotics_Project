@@ -41,20 +41,60 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 char incomingByte = 0; // for incoming serial data
 
 // Reference configuration of the robotic arm
-float x = 255; // mm
-float y = 0;   // mm
-float z = 110; //mm
+float x = 255.0; // mm
+float y = 0.0;   // mm
+float z = 110.0; //mm
 
 // variables used to calculate the inverse kinematics
-float t1 = 0;
-float d1 = 0;
+float t1 = 0.0;
+float d1 = 0.0;
 
-float t2 = 0;
-float d2 = 0;
+float t2 = 0.0;
+float d2 = 0.0;
 
-float t3 = 0;
-float d3 = 0;
-float t3cos = 0;
+float t3 = 0.0;
+float d3 = 0.0;
+float t3cos = 0.0;
+
+// float d1 = 110.0;
+// float l2 = 105.0;
+// float l3 = 150.0;
+
+// Whiteboard Points
+float points[][4] = {
+  {1, 77.5, 0.0, 305.0},
+  {2, 67.5, 0.0, 315.0},
+  {3, 67.5, 0.0, 295.0},
+  {4, 57.5, 0.0, 305.0},
+  {5, 47.5, 0.0, 335.0},
+  {6, 47.5, 0.0, 305.0},
+  {7, 47.5, 0.0, 275.0},
+  {8, 17.5, 0.0, 335.0},
+  {9, 17.5, 0.0, 305.0},
+  {10, 17.5, 0.0, 275.0},
+  {11, 7.5, 0.0, 280.0},
+  {12, 7.5, 0.0, 275.0},
+  {13, 2.5, 0.0, 280.0},
+  {14, 2.5, 0.0, 275.0},
+  {15, 7.5, 0.0, 305.0},
+};
+
+// Character Points
+int plus_index[] = {1, 4, 15, 2, 3};
+int minus_index[] = {1, 4};
+int zero_index[] = {5, 6, 7, 10, 9, 8};
+int one_index[] = {8, 9, 10};
+int two_index[] = {5, 8, 9, 6, 7, 10};
+int three_index[] = {5, 8, 9, 6, 9, 10, 7};
+int four_index[] = {5, 6, 9, 8, 9, 10};
+int five_index[] = {8, 5, 6, 9, 10, 7};
+int six_index[] = {8, 5, 6, 7, 10, 9, 6}; // Points index for 6
+int seven_index[] = {5, 8, 9, 10};
+int eight_index[] = {5, 6, 7, 10, 9, 8, 5, 6, 9};
+int nine_index[] = {9, 6, 5, 8, 9, 10};
+int period_index[] = {11, 12, 14, 13};
+
+float char_index_size = sizeof(two_index) / sizeof(two_index[1]);
 
 int grip = 400;
 
@@ -154,5 +194,30 @@ void loop() {
     // send pulselength value to the end effector
     pwm.setPWM(3, 0, grip);
   }
+
+void copy_array(int destination_index[], int source_array[], int source_array_length) {
+    memcpy(destination_array, source_array, sizeof(source_array));
+}
+
+copy_array(char_index, two_index, (sizeof(two_index) / sizeof(two_index[0])))
+  // Serial.println(points);
+  
+  for(int i = 0; i < 6; i++)
+{
+  Serial.println(char_index[i]);
+}
+  //Serial.println("two_index: "); Serial.println(two_index);
+  Serial.println("char_index_size: ");  Serial.println(char_index_size);
+
+// float char_point_setup(points[][], char_index[], char_index_size) {
+//   float char_points[char_index_size][3];
+//   for (int i{0}; i < char_index_size; i++) {
+//     char_points[i][0] = points[char_index[i]][1];
+//     char_points[i][1] = points[char_index[i]][2];
+//     char_points[i][2] = points[char_index[i]][3];
+//   }
+//   return char_points;
+// }
+
 
 }
