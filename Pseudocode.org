@@ -21,7 +21,6 @@
 
 * Supported Mathematical Functions 
 | Function       | User Input Symbol | Arduino Syntax |
-|----------------+-------------------+----------------|
 | Addition       | +                 | +              |
 | Subtraction    | -                 | -              |
 | Multiplication | *                 | *              |

@@ -9,6 +9,11 @@
 // called this way, it uses the default address 0x40
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
+// Define some functions to help find the sizes of arrays
+#define ArrayHeight(array) (sizeof(array) / sizeof(array[0]))
+#define ArrayWidth(array) (sizeof(array[0]) / sizeof(array[0][0]))
+#define VectorLength(vector) (sizeof(vector) / sizeof(vector[0]))
+
 #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
 
 // Robotic arm parameters.
@@ -56,9 +61,9 @@ float t3 = 0.0;
 float d3 = 0.0;
 float t3cos = 0.0;
 
-// float d1 = 110.0;
-// float l2 = 105.0;
-// float l3 = 150.0;
+float l1 = 110.0;
+float l2 = 105.0;
+float l3 = 150.0;
 
 // Whiteboard Points
 float points[][4] = {
@@ -94,7 +99,11 @@ int eight_index[] = {5, 6, 7, 10, 9, 8, 5, 6, 9};
 int nine_index[] = {9, 6, 5, 8, 9, 10};
 int period_index[] = {11, 12, 14, 13};
 
-float char_index_size = sizeof(two_index) / sizeof(two_index[1]);
+// float original_array[4][4];
+// float new_array[4][4];
+const int array_height = 5; //ArrayHeight(points);
+const int array_width = 4; //ArrayWidth(points);
+const int vector_length = 6; //VectorLength(two_index);
 
 int grip = 400;
 
@@ -108,12 +117,212 @@ void setup() {
   delay(10);
 
   // Move the robotic arm to the reference configuration
-  pwm.setPWM(0, 0, map(0,d0_min,d0_max,J0_min,J0_max));
-  pwm.setPWM(1, 0, map(0,d1_min,d1_max,J1_min,J1_max));
-  pwm.setPWM(2, 0, map(0,d2_min,d2_max,J2_min,J2_max));
-  pwm.setPWM(3, 0, grip);
+  // pwm.setPWM(0, 0, map(0,d0_min,d0_max,J0_min,J0_max));
+  // pwm.setPWM(1, 0, map(0,d1_min,d1_max,J1_min,J1_max));
+  // pwm.setPWM(2, 0, map(0,d2_min,d2_max,J2_min,J2_max));
+  // pwm.setPWM(3, 0, grip);
 
+  // float points_width = ArrayWidth(points);
+  // float points_height = ArrayHeight(points);
+  // float char_index_size = VectorLength(two_index);
+
+  // Serial.print("Char_Index_Size: ");
+  // Serial.println(char_index_size);
+  // Serial.print("Point_Width: ");
+  // Serial.println(points_width);
+  // Serial.print("Point_Height: ");
+  // Serial.println(points_height);
+
+  int points_height = ArrayHeight(points);
+  int points_width = ArrayWidth(points);
+  int two_length = VectorLength(two_index);
+  Serial.print("Point_Width: ");
+  Serial.println(points_width);
+  Serial.print("Point_Height: ");
+  Serial.println(points_height);
+
+  ////// This tests the array copy functionality //////
+  // Create a new array to copy into
+  float newArray[points_height][3];
+
+  // Call the function to copy the array
+  copyArray4to3(points, newArray, points_height);
+
+  // Print the original array
+  Serial.println("Original Array:");
+  printArray4(points, points_height);
+
+  delay(100);
+
+  // Print the copied array
+  Serial.println("Copied Array:");
+  printArray3(newArray, points_height);
+  ////////////////////////////////////////////////////
+
+  delay(100);
+
+  ////// This tests the vector copy functionality //////
+  // Create a new array to copy into
+  int newVector[two_length];
+
+  // Call the function to copy the array
+  copyVectorInt6(two_index, newVector);
+
+  // Print the original array
+  Serial.println("Original Vector:");
+  printVectorInt(two_index, VectorLength(two_index));
+
+  delay(100);
+
+  // Print the copied array
+  Serial.println("Copied Vector:");
+  printVectorInt(newVector, VectorLength(newVector));
+  //////////////////////////////////////////////////////
+
+  ////// Create char_index vector //////
+  int index_length = VectorLength(two_index);
+  int char_index[index_length] = {0};
+  copyVectorInt6(two_index, char_index);
+  printVectorInt(char_index, VectorLength(char_index));
+  //////////////////////////////////////
+
+  ////// Char Point Setup //////
+  float char_points[VectorLength(char_index)][3] = {0.0};
+  // printArray3(char_points, VectorLength(char_index));
+  for (int i = 0; i < VectorLength(char_index); ++i) {
+    // newVector[i] = originalVector[i];
+    char_points[i][0] = points[char_index[i] - 1][1];
+    Serial.println(" ");
+    Serial.println(char_index[i]);
+    Serial.println(points[char_index[i]][1]);
+    char_points[i][1] = points[char_index[i] - 1][2];
+    char_points[i][2] = points[char_index[i] - 1][3];
+  }
+  Serial.println("New char_points array: ");
+  printArray3(char_points, VectorLength(char_index));
+  //////////////////////////////
+
+  ////// Waypoint Array Setup //////
+  int n_wp = 15;
+  int char_waypoints_height = VectorLength(char_index) + (n_wp - 2)*(VectorLength(char_index) - 1);
+  float char_waypoints[char_waypoints_height][3] = {0.0};
+  Serial.println(char_waypoints_height);
+  printArray3(char_waypoints, char_waypoints_height);
+  for (int i = 0; i < VectorLength(char_index); ++i) {
+    // newVector[i] = originalVector[i];
+    char_waypoints[i + (i)*(n_wp - 2)][0] = char_points[i][0];
+    char_waypoints[i + (i)*(n_wp - 2)][1] = char_points[i][1];
+    char_waypoints[i + (i)*(n_wp - 2)][2] = char_points[i][2];
+  }
+  printArray3(char_waypoints, char_waypoints_height);
+
+  Serial.println(char_waypoints[0][0]);
+  //////////////////////////////////
+
+  ////// Waypoint Array Assignment //////
+  float x_increment[VectorLength(char_index) - 1] = {0.0};
+  float y_increment[VectorLength(char_index) - 1] = {0.0};
+  float z_increment[VectorLength(char_index) - 1] = {0.0};
+  for (int i = 0; i < (VectorLength(char_index) - 1); ++i) {
+    x_increment[i] = (char_points[i + 1][0] - char_points[i][0])/(n_wp - 1);
+    y_increment[i] = (char_points[i + 1][1] - char_points[i][1])/(n_wp - 1);
+    z_increment[i] = (char_points[i + 1][2] - char_points[i][2])/(n_wp - 1);
+  }
+  for (int i = 0; i < (VectorLength(char_index) - 1); ++i) {
+    for (int j = 0; j < (n_wp - 1); ++j) {
+      char_waypoints[i + (i)*(n_wp - 2) + j][0] = char_points[i][0] + j*(x_increment[i]);
+    }
+    for (int j = 0; j < (n_wp - 1); ++j) {
+      char_waypoints[i + (i)*(n_wp - 2) + j][1] = char_points[i][1] + j*(y_increment[i]);
+    }
+    for (int j = 0; j < (n_wp - 1); ++j) {
+      char_waypoints[i + (i)*(n_wp - 2) + j][2] = char_points[i][2] + j*(z_increment[i]);
+    }
+  }
+  printVector(x_increment, VectorLength(x_increment));
+  printArray3(char_waypoints, char_waypoints_height);
+  // Serial.println(char_points[0][0] + 1*(x_increment[0]));
+  // Serial.println(char_waypoints[1][0]);
+  ///////////////////////////////////////
+
+  ////// IK of char_waypoints //////
+  float x_values[char_waypoints_height] = {0.0};
+  float y_values[char_waypoints_height] = {0.0};
+  float z_values[char_waypoints_height] = {0.0};
+  float t3_values[char_waypoints_height] = {0.0};
+  float t2_values[char_waypoints_height] = {0.0};
+  float t1_values[char_waypoints_height] = {0.0};
+
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    x_values[i] = char_waypoints[i][0];
+  }
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    y_values[i] = char_waypoints[i][1];
+  }
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    z_values[i] = char_waypoints[i][2];
+  }
+  
+  printVector(x_values, VectorLength(x_values));
+
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    t1_values[i] = atan2(y_values[i], x_values[i]);                // [radians]
+    t1_values[i] = t1_values[i]*180/3.1415;   // [degrees];
+  }
+  
+  printVector(t1_values, VectorLength(t1_values));
+
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    t2_values[i] = atan2(z_values[i] - 110, sqrt(sq(x_values[i]) + sq(y_values[i]))) + acos((sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]) - 220*z_values[i] + 625)/(210*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i] - 110))));                // [radians]
+    // t2_values[i] = atan2(z_values[i] - l1, sqrt(sq(x_values[i]) + sq(y_values[i])) + acos((sq(l1) - 2*l1*z_values[i] + sq(l2) - sq(l3) + sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]))/(2*l2*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(l1 - z_values[i]))))); // This is the inverse kinematics formula that Dr. M had in his path planning example code.
+    t2_values[i] = t2_values[i]*180/3.1415;   // [degrees];
+  }
+
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    t3_values[i] = acosf(sq(x_values[i])/31500.0 + sq(y_values[i])/31500.0 + sq(z_values[i])/31500.0 - ((11.0*z_values[i])/1575.0) - (857.0/1260.0));                // [radians]
+    t3_values[i] = t3_values[i]*180/3.1415;   // [degrees];
+  }
+  Serial.println("Theta Values: ");
+  printVector(t1_values, VectorLength(t1_values));
+  printVector(t2_values, VectorLength(t2_values));
+  printVector(t3_values, VectorLength(t3_values));
+
+  //////////////////////////////////
+
+  ////// Convert Angles to Pulselengths //////
+  float pl1_values[char_waypoints_height] = {0.0};
+  float pl2_values[char_waypoints_height] = {0.0};
+  float pl3_values[char_waypoints_height] = {0.0};
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    // pwm.setPWM(0, 0, map(d1,d0_min,d0_max,J0_min,J0_max));
+    pl1_values[i] = map(t1_values[i],d0_min,d0_max,J0_min,J0_max);
+    pl2_values[i] = map(t2_values[i],d1_min,d1_max,J1_min,J1_max);
+    pl3_values[i] = map(t3_values[i],d2_min,d2_max,J2_min,J2_max);
+  }
+  Serial.println("Pulse Length Values: ");
+  printVector(pl1_values, VectorLength(pl1_values));
+  printVector(pl2_values, VectorLength(pl2_values));
+  printVector(pl3_values, VectorLength(pl3_values));
+  
+  ////////////////////////////////////////////
+
+  ////// Move Robot Arm //////
+  pwm.setPWM(0, 0, pl1_values[0]);
+  pwm.setPWM(1, 0, pl2_values[0]);
+  pwm.setPWM(2, 0, pl3_values[0]);
+  delay(3000);
+
+  for (int i = 1; i < char_waypoints_height; ++i) {
+    pwm.setPWM(0, 0, pl1_values[i]);
+    pwm.setPWM(1, 0, pl2_values[i]);
+    pwm.setPWM(2, 0, pl3_values[i]);
+    delay(50);
+  }
+  ////////////////////////////
+  Serial.println(" ");
+  Serial.println("Setup finished");
 }
+
 
 void loop() {
 
@@ -195,19 +404,19 @@ void loop() {
     pwm.setPWM(3, 0, grip);
   }
 
-void copy_array(int destination_index[], int source_array[], int source_array_length) {
-    memcpy(destination_array, source_array, sizeof(source_array));
-}
+// void copy_array(int destination_index[], int source_array[], int source_array_length) {
+//     memcpy(destination_array, source_array, sizeof(source_array));
+// }
 
-copy_array(char_index, two_index, (sizeof(two_index) / sizeof(two_index[0])))
-  // Serial.println(points);
+// copy_array(char_index, two_index, (sizeof(two_index) / sizeof(two_index[0])))
+//   // Serial.println(points);
   
-  for(int i = 0; i < 6; i++)
-{
-  Serial.println(char_index[i]);
-}
-  //Serial.println("two_index: "); Serial.println(two_index);
-  Serial.println("char_index_size: ");  Serial.println(char_index_size);
+//   for(int i = 0; i < 6; i++)
+// {
+//   Serial.println(char_index[i]);
+// }
+//   //Serial.println("two_index: "); Serial.println(two_index);
+//   Serial.println("char_index_size: ");  Serial.println(char_index_size);
 
 // float char_point_setup(points[][], char_index[], char_index_size) {
 //   float char_points[char_index_size][3];
@@ -220,4 +429,168 @@ copy_array(char_index, two_index, (sizeof(two_index) / sizeof(two_index[0])))
 // }
 
 
+}
+
+void copyArray4(float originalArray[][4], float newArray[][4], int array_height) { // This copies an array that is 4 elements wide
+  for (int i = 0; i < array_height; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      newArray[i][j] = originalArray[i][j];
+    }
+  }
+}
+
+void copyArray4to3(float originalArray[][4], float newArray[][3], int array_height) { // This copies an array that is 4 elements wide
+  for (int i = 0; i < array_height; ++i) {
+    for (int j = 1; j < 4; ++j) {
+      newArray[i][j - 1] = originalArray[i][j];
+    }
+  }
+}
+
+void copyVector(float originalVector[], float newVector[]) { // This function decides which copyVector function to use based on the length of the input vector.
+  // switch // Use a switch case statement to determine which copyVector function to use based on the length of the input vector.
+  // case
+  // case
+}
+
+////// Copy Vector Float //////
+
+void copyVector9(float originalVector[9], float newVector[9]) { // This copies a vector that is 9 elements long
+  for (int i = 0; i < 9; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVector8(float originalVector[8], float newVector[8]) { // This copies a vector that is 8 elements long
+  for (int i = 0; i < 8; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVector7(float originalVector[7], float newVector[7]) { // This copies a vector that is 7 elements long
+  for (int i = 0; i < 7; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVector6(float originalVector[6], float newVector[6]) { // This copies a vector that is 6 elements long
+  for (int i = 0; i < 6; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVector5(float originalVector[5], float newVector[5]) { // This copies a vector that is 5 elements long
+  for (int i = 0; i < 5; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVector4(float originalVector[4], float newVector[4]) { // This copies a vector that is 4 elements long
+  for (int i = 0; i < 4; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVector3(float originalVector[3], float newVector[3]) { // This copies a vector that is 3 elements long
+  for (int i = 0; i < 3; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVector2(float originalVector[2], float newVector[2]) { // This copies a vector that is 2 elements long
+  for (int i = 0; i < 2; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+////////////////////////////////////////////
+
+////// Copy Vector Int ///////
+
+void copyVectorInt9(int originalVector[9], int newVector[9]) { // This copies a vector that is 9 elements long
+  for (int i = 0; i < 9; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVectorInt8(int originalVector[8], int newVector[8]) { // This copies a vector that is 8 elements long
+  for (int i = 0; i < 8; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVectorInt7(int originalVector[7], int newVector[7]) { // This copies a vector that is 7 elements long
+  for (int i = 0; i < 7; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVectorInt6(int originalVector[6], int newVector[6]) { // This copies a vector that is 6 elements long
+  for (int i = 0; i < 6; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVectorInt5(int originalVector[5], int newVector[5]) { // This copies a vector that is 5 elements long
+  for (int i = 0; i < 5; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVectorInt4(int originalVector[4], int newVector[4]) { // This copies a vector that is 4 elements long
+  for (int i = 0; i < 4; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVectorInt3(int originalVector[3], int newVector[3]) { // This copies a vector that is 3 elements long
+  for (int i = 0; i < 3; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+void copyVectorInt2(int originalVector[2], int newVector[2]) { // This copies a vector that is 2 elements long
+  for (int i = 0; i < 2; ++i) {
+    newVector[i] = originalVector[i];
+  }
+}
+
+//////////////////////////////////////////
+
+void printVector(float vector[], int size) {
+  for (int i = 0; i < size; ++i) {
+    Serial.print(vector[i]);
+    Serial.print("\t");
+  }
+  Serial.println();
+}
+
+void printVectorInt(int vector[], int size) {
+  for (int i = 0; i < size; ++i) {
+    Serial.print(vector[i]);
+    Serial.print("\t");
+  }
+  Serial.println();
+}
+
+void printArray4(float array[][4], int array_height) {
+  for (int i = 0; i < array_height; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      Serial.print(array[i][j]);
+      Serial.print("\t");
+    }
+    Serial.println();
+  }
+  Serial.println();
+}
+
+void printArray3(float array[][3], int array_height) {
+  for (int i = 0; i < array_height; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      Serial.print(array[i][j]);
+      Serial.print("\t");
+    }
+    Serial.println();
+  }
+  Serial.println();
 }
