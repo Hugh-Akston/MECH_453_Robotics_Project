@@ -183,141 +183,148 @@ void setup() {
   int index_length = VectorLength(two_index);
   int char_index[index_length] = {0};
   copyVectorInt6(two_index, char_index);
-  printVectorInt(char_index, VectorLength(char_index));
+  printVectorInt(char_index, index_length);
   //////////////////////////////////////
 
-  ////// Char Point Setup //////
-  float char_points[VectorLength(char_index)][3] = {0.0};
-  // printArray3(char_points, VectorLength(char_index));
-  for (int i = 0; i < VectorLength(char_index); ++i) {
-    // newVector[i] = originalVector[i];
-    char_points[i][0] = points[char_index[i] - 1][1];
-    Serial.println(" ");
-    Serial.println(char_index[i]);
-    Serial.println(points[char_index[i]][1]);
-    char_points[i][1] = points[char_index[i] - 1][2];
-    char_points[i][2] = points[char_index[i] - 1][3];
-  }
-  Serial.println("New char_points array: ");
-  printArray3(char_points, VectorLength(char_index));
-  //////////////////////////////
+  numToPulselength(index_length, char_index, points);
 
-  ////// Waypoint Array Setup //////
-  int n_wp = 15;
-  int char_waypoints_height = VectorLength(char_index) + (n_wp - 2)*(VectorLength(char_index) - 1);
-  float char_waypoints[char_waypoints_height][3] = {0.0};
-  Serial.println(char_waypoints_height);
-  printArray3(char_waypoints, char_waypoints_height);
-  for (int i = 0; i < VectorLength(char_index); ++i) {
-    // newVector[i] = originalVector[i];
-    char_waypoints[i + (i)*(n_wp - 2)][0] = char_points[i][0];
-    char_waypoints[i + (i)*(n_wp - 2)][1] = char_points[i][1];
-    char_waypoints[i + (i)*(n_wp - 2)][2] = char_points[i][2];
-  }
-  printArray3(char_waypoints, char_waypoints_height);
+  // ////// Char Point Setup //////
+  // float char_points[index_length][3] = {0.0};
+  // // // printArray3(char_points, index_length);
+  // // for (int i = 0; i < index_length; ++i) {
+  // //   // newVector[i] = originalVector[i];
+  // //   char_points[i][0] = points[char_index[i] - 1][1];
+  // //   Serial.println(" ");
+  // //   Serial.println(char_index[i]);
+  // //   Serial.println(points[char_index[i]][1]);
+  // //   char_points[i][1] = points[char_index[i] - 1][2];
+  // //   char_points[i][2] = points[char_index[i] - 1][3];
+  // // }
+  // // Serial.println("New char_points array: ");
+  // // printArray3(char_points, index_length);
+  // //////////////////////////////
 
-  Serial.println(char_waypoints[0][0]);
-  //////////////////////////////////
+  // // Test charPointSetup
+  // charPointSetup(char_points, char_index, points, index_length);
+  // //
 
-  ////// Waypoint Array Assignment //////
-  float x_increment[VectorLength(char_index) - 1] = {0.0};
-  float y_increment[VectorLength(char_index) - 1] = {0.0};
-  float z_increment[VectorLength(char_index) - 1] = {0.0};
-  for (int i = 0; i < (VectorLength(char_index) - 1); ++i) {
-    x_increment[i] = (char_points[i + 1][0] - char_points[i][0])/(n_wp - 1);
-    y_increment[i] = (char_points[i + 1][1] - char_points[i][1])/(n_wp - 1);
-    z_increment[i] = (char_points[i + 1][2] - char_points[i][2])/(n_wp - 1);
-  }
-  for (int i = 0; i < (VectorLength(char_index) - 1); ++i) {
-    for (int j = 0; j < (n_wp - 1); ++j) {
-      char_waypoints[i + (i)*(n_wp - 2) + j][0] = char_points[i][0] + j*(x_increment[i]);
-    }
-    for (int j = 0; j < (n_wp - 1); ++j) {
-      char_waypoints[i + (i)*(n_wp - 2) + j][1] = char_points[i][1] + j*(y_increment[i]);
-    }
-    for (int j = 0; j < (n_wp - 1); ++j) {
-      char_waypoints[i + (i)*(n_wp - 2) + j][2] = char_points[i][2] + j*(z_increment[i]);
-    }
-  }
-  printVector(x_increment, VectorLength(x_increment));
-  printArray3(char_waypoints, char_waypoints_height);
-  // Serial.println(char_points[0][0] + 1*(x_increment[0]));
-  // Serial.println(char_waypoints[1][0]);
-  ///////////////////////////////////////
 
-  ////// IK of char_waypoints //////
-  float x_values[char_waypoints_height] = {0.0};
-  float y_values[char_waypoints_height] = {0.0};
-  float z_values[char_waypoints_height] = {0.0};
-  float t3_values[char_waypoints_height] = {0.0};
-  float t2_values[char_waypoints_height] = {0.0};
-  float t1_values[char_waypoints_height] = {0.0};
+  // ////// Waypoint Array Setup //////
+  // int n_wp = 15;
+  // int char_waypoints_height = index_length + (n_wp - 2)*(index_length - 1);
+  // float char_waypoints[char_waypoints_height][3] = {0.0};
+  // Serial.println(char_waypoints_height);
+  // printArray3(char_waypoints, char_waypoints_height);
+  // for (int i = 0; i < index_length; ++i) {
+  //   // newVector[i] = originalVector[i];
+  //   char_waypoints[i + (i)*(n_wp - 2)][0] = char_points[i][0];
+  //   char_waypoints[i + (i)*(n_wp - 2)][1] = char_points[i][1];
+  //   char_waypoints[i + (i)*(n_wp - 2)][2] = char_points[i][2];
+  // }
+  // printArray3(char_waypoints, char_waypoints_height);
 
-  for (int i = 0; i < char_waypoints_height; ++i) {
-    x_values[i] = char_waypoints[i][0];
-  }
-  for (int i = 0; i < char_waypoints_height; ++i) {
-    y_values[i] = char_waypoints[i][1];
-  }
-  for (int i = 0; i < char_waypoints_height; ++i) {
-    z_values[i] = char_waypoints[i][2];
-  }
+  // Serial.println(char_waypoints[0][0]);
+  // //////////////////////////////////
+
+  // ////// Waypoint Array Assignment //////
+  // float x_increment[index_length - 1] = {0.0};
+  // float y_increment[index_length - 1] = {0.0};
+  // float z_increment[index_length - 1] = {0.0};
+  // for (int i = 0; i < (index_length - 1); ++i) {
+  //   x_increment[i] = (char_points[i + 1][0] - char_points[i][0])/(n_wp - 1);
+  //   y_increment[i] = (char_points[i + 1][1] - char_points[i][1])/(n_wp - 1);
+  //   z_increment[i] = (char_points[i + 1][2] - char_points[i][2])/(n_wp - 1);
+  // }
+  // for (int i = 0; i < (index_length - 1); ++i) {
+  //   for (int j = 0; j < (n_wp - 1); ++j) {
+  //     char_waypoints[i + (i)*(n_wp - 2) + j][0] = char_points[i][0] + j*(x_increment[i]);
+  //   }
+  //   for (int j = 0; j < (n_wp - 1); ++j) {
+  //     char_waypoints[i + (i)*(n_wp - 2) + j][1] = char_points[i][1] + j*(y_increment[i]);
+  //   }
+  //   for (int j = 0; j < (n_wp - 1); ++j) {
+  //     char_waypoints[i + (i)*(n_wp - 2) + j][2] = char_points[i][2] + j*(z_increment[i]);
+  //   }
+  // }
+  // printVector(x_increment, VectorLength(x_increment));
+  // printArray3(char_waypoints, char_waypoints_height);
+  // // Serial.println(char_points[0][0] + 1*(x_increment[0]));
+  // // Serial.println(char_waypoints[1][0]);
+  // ///////////////////////////////////////
+
+  // ////// IK of char_waypoints //////
+  // float x_values[char_waypoints_height] = {0.0};
+  // float y_values[char_waypoints_height] = {0.0};
+  // float z_values[char_waypoints_height] = {0.0};
+  // float t3_values[char_waypoints_height] = {0.0};
+  // float t2_values[char_waypoints_height] = {0.0};
+  // float t1_values[char_waypoints_height] = {0.0};
+
+  // for (int i = 0; i < char_waypoints_height; ++i) {
+  //   x_values[i] = char_waypoints[i][0];
+  // }
+  // for (int i = 0; i < char_waypoints_height; ++i) {
+  //   y_values[i] = char_waypoints[i][1];
+  // }
+  // for (int i = 0; i < char_waypoints_height; ++i) {
+  //   z_values[i] = char_waypoints[i][2];
+  // }
   
-  printVector(x_values, VectorLength(x_values));
+  // printVector(x_values, VectorLength(x_values));
 
-  for (int i = 0; i < char_waypoints_height; ++i) {
-    t1_values[i] = atan2(y_values[i], x_values[i]);                // [radians]
-    t1_values[i] = t1_values[i]*180/3.1415;   // [degrees];
-  }
+  // for (int i = 0; i < char_waypoints_height; ++i) {
+  //   t1_values[i] = atan2(y_values[i], x_values[i]);                // [radians]
+  //   t1_values[i] = t1_values[i]*180/3.1415;   // [degrees];
+  // }
   
-  printVector(t1_values, VectorLength(t1_values));
+  // printVector(t1_values, VectorLength(t1_values));
 
-  for (int i = 0; i < char_waypoints_height; ++i) {
-    t2_values[i] = atan2(z_values[i] - 110, sqrt(sq(x_values[i]) + sq(y_values[i]))) + acos((sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]) - 220*z_values[i] + 625)/(210*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i] - 110))));                // [radians]
-    // t2_values[i] = atan2(z_values[i] - l1, sqrt(sq(x_values[i]) + sq(y_values[i])) + acos((sq(l1) - 2*l1*z_values[i] + sq(l2) - sq(l3) + sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]))/(2*l2*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(l1 - z_values[i]))))); // This is the inverse kinematics formula that Dr. M had in his path planning example code.
-    t2_values[i] = t2_values[i]*180/3.1415;   // [degrees];
-  }
+  // for (int i = 0; i < char_waypoints_height; ++i) {
+  //   t2_values[i] = atan2(z_values[i] - 110, sqrt(sq(x_values[i]) + sq(y_values[i]))) + acos((sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]) - 220*z_values[i] + 625)/(210*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i] - 110))));                // [radians]
+  //   // t2_values[i] = atan2(z_values[i] - l1, sqrt(sq(x_values[i]) + sq(y_values[i])) + acos((sq(l1) - 2*l1*z_values[i] + sq(l2) - sq(l3) + sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]))/(2*l2*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(l1 - z_values[i]))))); // This is the inverse kinematics formula that Dr. M had in his path planning example code.
+  //   t2_values[i] = t2_values[i]*180/3.1415;   // [degrees];
+  // }
 
-  for (int i = 0; i < char_waypoints_height; ++i) {
-    t3_values[i] = acosf(sq(x_values[i])/31500.0 + sq(y_values[i])/31500.0 + sq(z_values[i])/31500.0 - ((11.0*z_values[i])/1575.0) - (857.0/1260.0));                // [radians]
-    t3_values[i] = t3_values[i]*180/3.1415;   // [degrees];
-  }
-  Serial.println("Theta Values: ");
-  printVector(t1_values, VectorLength(t1_values));
-  printVector(t2_values, VectorLength(t2_values));
-  printVector(t3_values, VectorLength(t3_values));
+  // for (int i = 0; i < char_waypoints_height; ++i) {
+  //   t3_values[i] = acosf(sq(x_values[i])/31500.0 + sq(y_values[i])/31500.0 + sq(z_values[i])/31500.0 - ((11.0*z_values[i])/1575.0) - (857.0/1260.0));                // [radians]
+  //   t3_values[i] = t3_values[i]*180/3.1415;   // [degrees];
+  // }
+  // Serial.println("Theta Values: ");
+  // printVector(t1_values, VectorLength(t1_values));
+  // printVector(t2_values, VectorLength(t2_values));
+  // printVector(t3_values, VectorLength(t3_values));
 
-  //////////////////////////////////
+  // //////////////////////////////////
 
-  ////// Convert Angles to Pulselengths //////
-  float pl1_values[char_waypoints_height] = {0.0};
-  float pl2_values[char_waypoints_height] = {0.0};
-  float pl3_values[char_waypoints_height] = {0.0};
-  for (int i = 0; i < char_waypoints_height; ++i) {
-    // pwm.setPWM(0, 0, map(d1,d0_min,d0_max,J0_min,J0_max));
-    pl1_values[i] = map(t1_values[i],d0_min,d0_max,J0_min,J0_max);
-    pl2_values[i] = map(t2_values[i],d1_min,d1_max,J1_min,J1_max);
-    pl3_values[i] = map(t3_values[i],d2_min,d2_max,J2_min,J2_max);
-  }
-  Serial.println("Pulse Length Values: ");
-  printVector(pl1_values, VectorLength(pl1_values));
-  printVector(pl2_values, VectorLength(pl2_values));
-  printVector(pl3_values, VectorLength(pl3_values));
+  // ////// Convert Angles to Pulselengths //////
+  // float pl1_values[char_waypoints_height] = {0.0};
+  // float pl2_values[char_waypoints_height] = {0.0};
+  // float pl3_values[char_waypoints_height] = {0.0};
+  // for (int i = 0; i < char_waypoints_height; ++i) {
+  //   // pwm.setPWM(0, 0, map(d1,d0_min,d0_max,J0_min,J0_max));
+  //   pl1_values[i] = map(t1_values[i],d0_min,d0_max,J0_min,J0_max);
+  //   pl2_values[i] = map(t2_values[i],d1_min,d1_max,J1_min,J1_max);
+  //   pl3_values[i] = map(t3_values[i],d2_min,d2_max,J2_min,J2_max);
+  // }
+  // Serial.println("Pulse Length Values: ");
+  // printVector(pl1_values, VectorLength(pl1_values));
+  // printVector(pl2_values, VectorLength(pl2_values));
+  // printVector(pl3_values, VectorLength(pl3_values));
   
-  ////////////////////////////////////////////
+  // ////////////////////////////////////////////
 
-  ////// Move Robot Arm //////
-  pwm.setPWM(0, 0, pl1_values[0]);
-  pwm.setPWM(1, 0, pl2_values[0]);
-  pwm.setPWM(2, 0, pl3_values[0]);
-  delay(3000);
+  // ////// Move Robot Arm //////
+  // pwm.setPWM(0, 0, pl1_values[0]);
+  // pwm.setPWM(1, 0, pl2_values[0]);
+  // pwm.setPWM(2, 0, pl3_values[0]);
+  // delay(3000);
 
-  for (int i = 1; i < char_waypoints_height; ++i) {
-    pwm.setPWM(0, 0, pl1_values[i]);
-    pwm.setPWM(1, 0, pl2_values[i]);
-    pwm.setPWM(2, 0, pl3_values[i]);
-    delay(50);
-  }
+  // for (int i = 1; i < char_waypoints_height; ++i) {
+  //   pwm.setPWM(0, 0, pl1_values[i]);
+  //   pwm.setPWM(1, 0, pl2_values[i]);
+  //   pwm.setPWM(2, 0, pl3_values[i]);
+  //   delay(50);
+  // }
   ////////////////////////////
   Serial.println(" ");
   Serial.println("Setup finished");
@@ -594,3 +601,134 @@ void printArray3(float array[][3], int array_height) {
   }
   Serial.println();
 }
+
+  // ////// Create char_index vector //////
+  // int index_length = VectorLength(two_index);
+  // int char_index[index_length] = {0};
+  // copyVectorInt6(two_index, char_index);
+  // printVectorInt(char_index, index_length);
+  // //////////////////////////////////////
+
+////// numToPulselength //////
+void numToPulselength(int index_length, int char_index[], float points[][4]){
+    ////// Char Point Setup //////
+  float char_points[index_length][3] = {0.0};
+  // printArray3(char_points, index_length);
+  for (int i = 0; i < index_length; ++i) {
+    // newVector[i] = originalVector[i];
+    char_points[i][0] = points[char_index[i] - 1][1];
+    Serial.println(" ");
+    Serial.println(char_index[i]);
+    Serial.println(points[char_index[i]][1]);
+    char_points[i][1] = points[char_index[i] - 1][2];
+    char_points[i][2] = points[char_index[i] - 1][3];
+  }
+  Serial.println("New char_points array: ");
+  printArray3(char_points, index_length);
+  ////////////////////////////
+
+  ////// Waypoint Array Setup //////
+  int n_wp = 15;
+  int char_waypoints_height = index_length + (n_wp - 2)*(index_length - 1);
+  float char_waypoints[char_waypoints_height][3] = {0.0};
+  Serial.println(char_waypoints_height);
+  printArray3(char_waypoints, char_waypoints_height);
+  for (int i = 0; i < index_length; ++i) {
+    // newVector[i] = originalVector[i];
+    char_waypoints[i + (i)*(n_wp - 2)][0] = char_points[i][0];
+    char_waypoints[i + (i)*(n_wp - 2)][1] = char_points[i][1];
+    char_waypoints[i + (i)*(n_wp - 2)][2] = char_points[i][2];
+  }
+  printArray3(char_waypoints, char_waypoints_height);
+
+  Serial.println(char_waypoints[0][0]);
+  //////////////////////////////////
+
+  ////// Waypoint Array Assignment //////
+  float x_increment[index_length - 1] = {0.0};
+  float y_increment[index_length - 1] = {0.0};
+  float z_increment[index_length - 1] = {0.0};
+  for (int i = 0; i < (index_length - 1); ++i) {
+    x_increment[i] = (char_points[i + 1][0] - char_points[i][0])/(n_wp - 1);
+    y_increment[i] = (char_points[i + 1][1] - char_points[i][1])/(n_wp - 1);
+    z_increment[i] = (char_points[i + 1][2] - char_points[i][2])/(n_wp - 1);
+  }
+  for (int i = 0; i < (index_length - 1); ++i) {
+    for (int j = 0; j < (n_wp - 1); ++j) {
+      char_waypoints[i + (i)*(n_wp - 2) + j][0] = char_points[i][0] + j*(x_increment[i]);
+    }
+    for (int j = 0; j < (n_wp - 1); ++j) {
+      char_waypoints[i + (i)*(n_wp - 2) + j][1] = char_points[i][1] + j*(y_increment[i]);
+    }
+    for (int j = 0; j < (n_wp - 1); ++j) {
+      char_waypoints[i + (i)*(n_wp - 2) + j][2] = char_points[i][2] + j*(z_increment[i]);
+    }
+  }
+  printVector(x_increment, VectorLength(x_increment));
+  printArray3(char_waypoints, char_waypoints_height);
+  // Serial.println(char_points[0][0] + 1*(x_increment[0]));
+  // Serial.println(char_waypoints[1][0]);
+  ///////////////////////////////////////
+
+  ////// IK of char_waypoints //////
+  float x_values[char_waypoints_height] = {0.0};
+  float y_values[char_waypoints_height] = {0.0};
+  float z_values[char_waypoints_height] = {0.0};
+  float t3_values[char_waypoints_height] = {0.0};
+  float t2_values[char_waypoints_height] = {0.0};
+  float t1_values[char_waypoints_height] = {0.0};
+
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    x_values[i] = char_waypoints[i][0];
+  }
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    y_values[i] = char_waypoints[i][1];
+  }
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    z_values[i] = char_waypoints[i][2];
+  }
+  
+  printVector(x_values, VectorLength(x_values));
+
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    t1_values[i] = atan2(y_values[i], x_values[i]);                // [radians]
+    t1_values[i] = t1_values[i]*180/3.1415;   // [degrees];
+  }
+  
+  printVector(t1_values, VectorLength(t1_values));
+
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    t2_values[i] = atan2(z_values[i] - 110, sqrt(sq(x_values[i]) + sq(y_values[i]))) + acos((sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]) - 220*z_values[i] + 625)/(210*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i] - 110))));                // [radians]
+    // t2_values[i] = atan2(z_values[i] - l1, sqrt(sq(x_values[i]) + sq(y_values[i])) + acos((sq(l1) - 2*l1*z_values[i] + sq(l2) - sq(l3) + sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]))/(2*l2*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(l1 - z_values[i]))))); // This is the inverse kinematics formula that Dr. M had in his path planning example code.
+    t2_values[i] = t2_values[i]*180/3.1415;   // [degrees];
+  }
+
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    t3_values[i] = acosf(sq(x_values[i])/31500.0 + sq(y_values[i])/31500.0 + sq(z_values[i])/31500.0 - ((11.0*z_values[i])/1575.0) - (857.0/1260.0));                // [radians]
+    t3_values[i] = t3_values[i]*180/3.1415;   // [degrees];
+  }
+  Serial.println("Theta Values: ");
+  printVector(t1_values, VectorLength(t1_values));
+  printVector(t2_values, VectorLength(t2_values));
+  printVector(t3_values, VectorLength(t3_values));
+
+  //////////////////////////////////
+
+  ////// Convert Angles to Pulselengths //////
+  float pl1_values[char_waypoints_height] = {0.0};
+  float pl2_values[char_waypoints_height] = {0.0};
+  float pl3_values[char_waypoints_height] = {0.0};
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    // pwm.setPWM(0, 0, map(d1,d0_min,d0_max,J0_min,J0_max));
+    pl1_values[i] = map(t1_values[i],d0_min,d0_max,J0_min,J0_max);
+    pl2_values[i] = map(t2_values[i],d1_min,d1_max,J1_min,J1_max);
+    pl3_values[i] = map(t3_values[i],d2_min,d2_max,J2_min,J2_max);
+  }
+  Serial.println("Pulse Length Values: ");
+  printVector(pl1_values, VectorLength(pl1_values));
+  printVector(pl2_values, VectorLength(pl2_values));
+  printVector(pl3_values, VectorLength(pl3_values));
+  
+  ////////////////////////////////////////////
+}
+//////////////////////////////

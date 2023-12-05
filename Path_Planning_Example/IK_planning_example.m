@@ -55,7 +55,7 @@ char_points = char_point_setup(points, char_index);
 % y = m*x+y_int;
 
 %% Waypoint Generation
-n = 2;
+n = 5;
 % char_waypoints = zeros(length(char_points) + (n - 2)*(length(char_points) - 1), 3); % Preallocate size of coordinates array including waypoints
 % 
 % for i = 1:length(char_points) % - 1
