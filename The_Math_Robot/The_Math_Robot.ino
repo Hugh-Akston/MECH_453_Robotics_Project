@@ -5,6 +5,7 @@
 #include <Wire.h>
 #include <math.h>
 #include <Adafruit_PWMServoDriver.h>
+#include <Arduino.h>
 
 // called this way, it uses the default address 0x40
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
@@ -333,107 +334,140 @@ void setup() {
 
 void loop() {
 
-  // send data only when you receive data: 
-  if (Serial.available() > 0) { 
-    // read the incoming byte: 
-    incomingByte = Serial.read();
+if (Serial.available() > 0) { 
 
-    // say what you got: 
-    Serial.println(incomingByte);
+    String input = Serial.readStringUntil('\n'); 
+    input.trim(); // Remove leading and trailing whitespaces 
 
-    // print the current x, y, z value
-    Serial.print("x: "); Serial.print(x);
-    Serial.print(", y: "); Serial.print(y);
-    Serial.print(", z: "); Serial.println(z);
-    switch (incomingByte) {
-      case 'q':  // move in x
-        x += 5;
-        break;
-      case 'a':
-        x -= 5;
-        break;
+    // Evaluate the mathematical expression 
+    double result = evaluateExpression(input); 
+
+    // Print the original result 
+    Serial.print("Original Result: "); 
+    Serial.println(result);
+
+    // Interpret the result into a vector 
+    int numDigits = countDigits(result); 
+    int* resultVector = new int[numDigits]; 
+    interpretResult(result, resultVector, numDigits); 
+
+    // Print the interpreted vector 
+    Serial.println("Interpreted Result Vector:");
+    for (int i = 0; i < numDigits; ++i) { 
+
+      Serial.print(resultVector[i]); 
+      Serial.print("\t"); 
+
+    } 
+    Serial.println();
+
+    // Deallocate memory 
+
+    delete[] resultVector; 
+    Serial.println("Enter a mathematical expression:"); 
+
+  } 
+//   // send data only when you receive data: 
+//   if (Serial.available() > 0) { 
+//     // read the incoming byte: 
+//     incomingByte = Serial.read();
+
+//     // say what you got: 
+//     Serial.println(incomingByte);
+
+//     // print the current x, y, z value
+//     Serial.print("x: "); Serial.print(x);
+//     Serial.print(", y: "); Serial.print(y);
+//     Serial.print(", z: "); Serial.println(z);
+//     switch (incomingByte) {
+//       case 'q':  // move in x
+//         x += 5;
+//         break;
+//       case 'a':
+//         x -= 5;
+//         break;
         
-      case 'w':  // move in y
-        y += 5;
-        break;
-      case 's':
-        y -= 5;
-        break; 
+//       case 'w':  // move in y
+//         y += 5;
+//         break;
+//       case 's':
+//         y -= 5;
+//         break; 
         
-      case 'e':  // move in z
-        z += 5;
-        break;
-      case 'd':
-        z -= 5;
-        break;
+//       case 'e':  // move in z
+//         z += 5;
+//         break;
+//       case 'd':
+//         z -= 5;
+//         break;
 
-      case 'r':  // open/close the end effector
-        grip += 5;
-        break;
-      case 'f':
-        grip -= 5;
-        break;   
+//       case 'r':  // open/close the end effector
+//         grip += 5;
+//         break;
+//       case 'f':
+//         grip -= 5;
+//         break;   
         
-      case 'h':  // move the robot to the reference configuration 
-        x = 255; y = 0; z = 110; grip = 400;
-        break;  
-    }
-    // print the modified x, y, z value
-    Serial.print("x: "); Serial.print(x);
-    Serial.print(", y: "); Serial.print(y);
-    Serial.print(", z: "); Serial.println(z);
+//       case 'h':  // move the robot to the reference configuration 
+//         x = 255; y = 0; z = 110; grip = 400;
+//         break;  
+//     }
+//     // print the modified x, y, z value
+//     Serial.print("x: "); Serial.print(x);
+//     Serial.print(", y: "); Serial.print(y);
+//     Serial.print(", z: "); Serial.println(z);
 
 
-    /////////////// Compute the inverse kinematics of the robotic arm ///////////////
-    ////// inverse kinematics (joint 1) //////
-    t1 = atan2(y, x);                // [radians]
-    d1 = t1*180/3.1415;   // [degrees]
-    Serial.print("t1: "); Serial.println(d1);
-    // map degrees to pulselength and send value to robotic arm
-    pwm.setPWM(0, 0, map(d1,d0_min,d0_max,J0_min,J0_max));    
+//     /////////////// Compute the inverse kinematics of the robotic arm ///////////////
+//     ////// inverse kinematics (joint 1) //////
+//     t1 = atan2(y, x);                // [radians]
+//     d1 = t1*180/3.1415;   // [degrees]
+//     Serial.print("t1: "); Serial.println(d1);
+//     // map degrees to pulselength and send value to robotic arm
+//     pwm.setPWM(0, 0, map(d1,d0_min,d0_max,J0_min,J0_max));    
 
-    ////// inverse kinematics (joint 2) //////
-    t2 = atan2(z - 110, sqrt(sq(x) + sq(y))) + acos((sq(x) + sq(y) + sq(z) - 220*z + 625)/(210*sqrt(sq(x) + sq(y) + sq(z - 110))));                // [radians]
-    d2 = t2*180/3.1415;   // [degrees]
-    Serial.print("t2: "); Serial.println(d2);
-    // map degrees to pulselength and send value to robotic arm
-    pwm.setPWM(1, 0, map(d2,d1_min,d1_max,J1_min,J1_max));
+//     ////// inverse kinematics (joint 2) //////
+//     t2 = atan2(z - 110, sqrt(sq(x) + sq(y))) + acos((sq(x) + sq(y) + sq(z) - 220*z + 625)/(210*sqrt(sq(x) + sq(y) + sq(z - 110))));                // [radians]
+//     d2 = t2*180/3.1415;   // [degrees]
+//     Serial.print("t2: "); Serial.println(d2);
+//     // map degrees to pulselength and send value to robotic arm
+//     pwm.setPWM(1, 0, map(d2,d1_min,d1_max,J1_min,J1_max));
 
-    ////// inverse kinematics (joint 3) //////
-    t3 = acosf(sq(x)/31500.0 + sq(y)/31500.0 + sq(z)/31500.0 - ((11.0*z)/1575.0) - (857.0/1260.0));     // [radians]
-    d3 = t3*180.0/3.1415;   // [degrees]
-    Serial.print("t3: "); Serial.println(t3);
-    // map degrees to pulselength and send value to robotic arm
-    pwm.setPWM(2, 0, map(d3,d2_min,d2_max,J2_min,J2_max));
+//     ////// inverse kinematics (joint 3) //////
+//     t3 = acosf(sq(x)/31500.0 + sq(y)/31500.0 + sq(z)/31500.0 - ((11.0*z)/1575.0) - (857.0/1260.0));     // [radians]
+//     d3 = t3*180.0/3.1415;   // [degrees]
+//     Serial.print("t3: "); Serial.println(t3);
+//     // map degrees to pulselength and send value to robotic arm
+//     pwm.setPWM(2, 0, map(d3,d2_min,d2_max,J2_min,J2_max));
 
-    /////// inverse kinematics (joint 3) //////
-    // send pulselength value to the end effector
-    pwm.setPWM(3, 0, grip);
-  }
-
-// void copy_array(int destination_index[], int source_array[], int source_array_length) {
-//     memcpy(destination_array, source_array, sizeof(source_array));
-// }
-
-// copy_array(char_index, two_index, (sizeof(two_index) / sizeof(two_index[0])))
-//   // Serial.println(points);
-  
-//   for(int i = 0; i < 6; i++)
-// {
-//   Serial.println(char_index[i]);
-// }
-//   //Serial.println("two_index: "); Serial.println(two_index);
-//   Serial.println("char_index_size: ");  Serial.println(char_index_size);
-
-// float char_point_setup(points[][], char_index[], char_index_size) {
-//   float char_points[char_index_size][3];
-//   for (int i{0}; i < char_index_size; i++) {
-//     char_points[i][0] = points[char_index[i]][1];
-//     char_points[i][1] = points[char_index[i]][2];
-//     char_points[i][2] = points[char_index[i]][3];
+//     /////// inverse kinematics (joint 3) //////
+//     // send pulselength value to the end effector
+//     pwm.setPWM(3, 0, grip);
 //   }
-//   return char_points;
-// }
+
+// // void copy_array(int destination_index[], int source_array[], int source_array_length) {
+// //     memcpy(destination_array, source_array, sizeof(source_array));
+// // }
+
+// // copy_array(char_index, two_index, (sizeof(two_index) / sizeof(two_index[0])))
+// //   // Serial.println(points);
+  
+// //   for(int i = 0; i < 6; i++)
+// // {
+// //   Serial.println(char_index[i]);
+// // }
+// //   //Serial.println("two_index: "); Serial.println(two_index);
+// //   Serial.println("char_index_size: ");  Serial.println(char_index_size);
+
+// // float char_point_setup(points[][], char_index[], char_index_size) {
+// //   float char_points[char_index_size][3];
+// //   for (int i{0}; i < char_index_size; i++) {
+// //     char_points[i][0] = points[char_index[i]][1];
+// //     char_points[i][1] = points[char_index[i]][2];
+// //     char_points[i][2] = points[char_index[i]][3];
+// //   }
+// //   return char_points;
+// // }
 
 
 }
@@ -732,3 +766,111 @@ void numToPulselength(int index_length, int char_index[], float points[][4]){
   ////////////////////////////////////////////
 }
 //////////////////////////////
+
+double evaluateExpression(String expression) { 
+  // Replace 'x' with '*' for multiplication 
+  expression.replace("x", "*"); 
+
+  // Evaluate the expression 
+  int index = 0; 
+  double result = parseTerm(expression, index); 
+  while (index < expression.length()) { 
+
+    char op = expression.charAt(index); 
+    index++; 
+    double operand = parseTerm(expression, index); 
+
+    // Perform the operation 
+    if (op == '+') { 
+      result += operand; 
+    } else if (op == '-') { 
+      result -= operand; 
+    } else { 
+      Serial.println("Invalid operator");
+      return 0; 
+    } 
+
+  } 
+  return result; 
+}
+
+double parseTerm(String expression, int &index) { 
+  double result = parseFactor(expression, index);
+  while (index < expression.length()) { 
+    char op = expression.charAt(index); 
+    if (op == '*' || op == '/') { 
+      index++; 
+      double operand = parseFactor(expression, index); 
+      // Perform the operation 
+      if (op == '*') { 
+        result *= operand; 
+      } else if (op == '/') { 
+        if (operand != 0) { 
+          result /= operand; 
+        } else { 
+          Serial.println("Division by zero"); 
+          return 0; 
+        } 
+
+      } 
+
+    } else { 
+
+      break; 
+    } 
+
+  }
+  return result; 
+}
+
+double parseFactor(String expression, int &index) { 
+  double result = 0; 
+  // Check for parentheses 
+  if (expression.charAt(index) == '(') { 
+    index++; 
+    result = evaluateExpression(expression); 
+    index++; // Skip the closing parenthesis 
+  } else { 
+
+    // Read the number 
+    result = expression.substring(index).toFloat(); 
+    while (index < expression.length() && 
+           (isdigit(expression.charAt(index)) || expression.charAt(index) == '.')) { 
+      index++; 
+    } 
+
+  }
+  return result; 
+}
+
+int countDigits(double num) { 
+  // Count the number of digits in the number 
+  int count = 0; 
+  long long intPart = static_cast<long long>(num); 
+  while (intPart != 0) { 
+    intPart /= 10; 
+    count++; 
+  } 
+  return count; 
+
+}
+
+void interpretResult(double result, int resultVector[], int numDigits) { 
+  // Convert the double result to a string 
+  String resultString = String(result, 10); 
+
+  // Initialize the result vector 
+  for (int i = 0; i < numDigits; ++i) { 
+    resultVector[i] = 0; 
+  } 
+
+  // Interpret the result into the vector 
+  int vecIndex = 0; 
+  for (int i = 0; i < resultString.length() && vecIndex < numDigits; ++i) { 
+    if (isdigit(resultString.charAt(i))) { 
+      resultVector[vecIndex] = resultString.charAt(i) - '0'; 
+      vecIndex++; 
+    } 
+
+  }
+}
