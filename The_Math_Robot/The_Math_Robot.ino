@@ -20,22 +20,22 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 // Robotic arm parameters.
 // These will need to be modified based on your arm
 ////// Theta 1 //////
-#define J0_min  88   // min pulselength
-#define J0_max  484   // max pulselength
+#define J0_min  100   // min pulselength
+#define J0_max  476   // max pulselength
 #define d0_min  -90   // corresponding limit in degrees (min)
 #define d0_max  90    // max degrees
 
 ////// Theta 2 //////
-#define J1_min  112    // min pulselength
-#define J1_max  488   // max pulselength
+#define J1_min  124    // min pulselength
+#define J1_max  480   // max pulselength
 #define d1_min  0     // corresponding limit in degrees (min)
 #define d1_max  180    // max degrees
 
 ////// Theta 3 //////
-#define J2_min  112   // min pulselength
-#define J2_max  412   // max pulselength
-#define d2_min  -90     // corresponding limit in degrees (min)
-#define d2_max  90    // max degrees
+#define J2_min  104   // min pulselength
+#define J2_max  448   // max pulselength
+#define d2_min  -110     // corresponding limit in degrees (min)
+#define d2_max  110    // max degrees
 
 ////// End Effector //////
 #define J3_min  304   // pulselength in open position
@@ -88,7 +88,7 @@ float points[][4] = {
 // Character Points
 int plus_index[] = {1, 4, 15, 2, 3};
 int minus_index[] = {1, 4};
-int zero_index[] = {5, 6, 7, 10, 9, 8};
+int zero_index[] = {5, 6, 7, 10, 9, 8, 5};
 int one_index[] = {8, 9, 10};
 int two_index[] = {5, 8, 9, 6, 7, 10};
 int three_index[] = {5, 8, 9, 6, 9, 10, 7};
@@ -98,7 +98,7 @@ int six_index[] = {8, 5, 6, 7, 10, 9, 6}; // Points index for 6
 int seven_index[] = {5, 8, 9, 10};
 int eight_index[] = {5, 6, 7, 10, 9, 8, 5, 6, 9};
 int nine_index[] = {9, 6, 5, 8, 9, 10};
-int period_index[] = {11, 12, 14, 13};
+int decimal_index[] = {11, 12, 14, 13};
 
 // float original_array[4][4];
 // float new_array[4][4];
@@ -187,7 +187,7 @@ void setup() {
   printVectorInt(char_index, index_length);
   //////////////////////////////////////
 
-  numToPulselength(index_length, char_index, points);
+  // numToPulselength(index_length, char_index, points, x_shift);
 
   // ////// Char Point Setup //////
   // float char_points[index_length][3] = {0.0};
@@ -347,7 +347,8 @@ if (Serial.available() > 0) {
     Serial.println(result);
 
     // Interpret the result into a vector 
-    int numDigits = countDigits(result); 
+    int numDigits = 3; //countDigits(result); 
+    Serial.println(numDigits);
     int* resultVector = new int[numDigits]; 
     interpretResult(result, resultVector, numDigits); 
 
@@ -360,6 +361,153 @@ if (Serial.available() > 0) {
 
     } 
     Serial.println();
+
+    char charVector[numDigits];
+    floatToVector(result, charVector, numDigits);
+    Serial.print("Converted vector: ");
+    Serial.println(charVector);
+    Serial.print("First Element of Converted vector: ");
+    Serial.println(charVector[0]);
+
+    for (int i = 0; i < numDigits; ++i) { 
+      float shift_distance = 30.0;
+      float x_shift = shift_distance*i;
+      Serial.print("x_shift");
+      Serial.println(x_shift);
+      switch (charVector[i]) {
+        case '+':
+
+        {Serial.println("+ sign");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(plus_index);
+        int char_index[index_length] = {0};
+        copyVectorInt5(plus_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+        case '-':
+        {Serial.println("- sign");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(minus_index);
+        int char_index[index_length] = {0};
+        copyVectorInt2(minus_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+        case '.':
+        {Serial.println(".");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(decimal_index);
+        int char_index[index_length] = {0};
+        copyVectorInt4(decimal_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+        case '0':
+        {Serial.println("The number is 0");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(zero_index);
+        int char_index[index_length] = {0};
+        copyVectorInt6(zero_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+        case '1':
+        {Serial.println("The number is 1");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(one_index);
+        int char_index[index_length] = {0};
+        copyVectorInt3(one_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+        case '2':
+        {Serial.println("The number is 0");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(two_index);
+        int char_index[index_length] = {0};
+        copyVectorInt6(two_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+        case '3':
+        {Serial.println("The number is 3");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(three_index);
+        int char_index[index_length] = {0};
+        copyVectorInt7(three_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+        case '4':
+        {Serial.println("The number is 4");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(four_index);
+        int char_index[index_length] = {0};
+        copyVectorInt6(four_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+        case '5':
+        {Serial.println("The number is 5");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(five_index);
+        int char_index[index_length] = {0};
+        copyVectorInt6(five_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+        case '6':
+        {Serial.println("The number is 6");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(six_index);
+        int char_index[index_length] = {0};
+        copyVectorInt7(six_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+        case '7':
+        {Serial.println("The number is 7");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(seven_index);
+        int char_index[index_length] = {0};
+        copyVectorInt4(seven_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+        case '8':
+        {Serial.println("The number is 8");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(eight_index);
+        int char_index[index_length] = {0};
+        copyVectorInt8(eight_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+        case '9':
+        {Serial.println("The number is 9");
+        ////// Create char_index vector //////
+        int index_length = VectorLength(nine_index);
+        int char_index[index_length] = {0};
+        copyVectorInt6(nine_index, char_index);
+        ////// Draw the number //////
+        numToPulselength(index_length, char_index, points, x_shift);
+        break;}
+
+      }
+    }
 
     // Deallocate memory 
 
@@ -644,13 +792,13 @@ void printArray3(float array[][3], int array_height) {
   // //////////////////////////////////////
 
 ////// numToPulselength //////
-void numToPulselength(int index_length, int char_index[], float points[][4]){
+void numToPulselength(int index_length, int char_index[], float points[][4], float x_shift){
     ////// Char Point Setup //////
   float char_points[index_length][3] = {0.0};
   // printArray3(char_points, index_length);
   for (int i = 0; i < index_length; ++i) {
     // newVector[i] = originalVector[i];
-    char_points[i][0] = points[char_index[i] - 1][1];
+    char_points[i][0] = points[char_index[i] - 1][1] + 60; // Added 40 to shift all the numbers to the right.
     Serial.println(" ");
     Serial.println(char_index[i]);
     Serial.println(points[char_index[i]][1]);
@@ -698,8 +846,27 @@ void numToPulselength(int index_length, int char_index[], float points[][4]){
       char_waypoints[i + (i)*(n_wp - 2) + j][2] = char_points[i][2] + j*(z_increment[i]);
     }
   }
-  printVector(x_increment, VectorLength(x_increment));
+
+  Serial.println("Before Shift:");
   printArray3(char_waypoints, char_waypoints_height);
+
+  for (int i = 0; i < char_waypoints_height; ++i) {
+    char_waypoints[i][0] = char_waypoints[i][0] - x_shift;
+  }
+  printVector(x_increment, VectorLength(x_increment));
+  Serial.println("After Shift:");
+  printArray3(char_waypoints, char_waypoints_height);
+
+  int off_board = 0;
+  if (char_waypoints[0][0] > 0) {
+    off_board = off_board + 40;
+    Serial.println("off_board = 40");
+  }
+  else if (char_waypoints[0][0] < 0) {
+    off_board = off_board - 40;
+    Serial.println("off_board = -40");
+  }
+
   // Serial.println(char_points[0][0] + 1*(x_increment[0]));
   // Serial.println(char_waypoints[1][0]);
   ///////////////////////////////////////
@@ -723,12 +890,14 @@ void numToPulselength(int index_length, int char_index[], float points[][4]){
   }
   
   printVector(x_values, VectorLength(x_values));
+  printVector(y_values, VectorLength(y_values));
+  printVector(z_values, VectorLength(z_values));
 
   for (int i = 0; i < char_waypoints_height; ++i) {
     t1_values[i] = atan2(y_values[i], x_values[i]);                // [radians]
     t1_values[i] = t1_values[i]*180/3.1415;   // [degrees];
   }
-  
+  Serial.println("Theta 1 Values");
   printVector(t1_values, VectorLength(t1_values));
 
   for (int i = 0; i < char_waypoints_height; ++i) {
@@ -736,11 +905,16 @@ void numToPulselength(int index_length, int char_index[], float points[][4]){
     // t2_values[i] = atan2(z_values[i] - l1, sqrt(sq(x_values[i]) + sq(y_values[i])) + acos((sq(l1) - 2*l1*z_values[i] + sq(l2) - sq(l3) + sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]))/(2*l2*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(l1 - z_values[i]))))); // This is the inverse kinematics formula that Dr. M had in his path planning example code.
     t2_values[i] = t2_values[i]*180/3.1415;   // [degrees];
   }
+  Serial.println("Theta 2 Values");
+  printVector(t2_values, VectorLength(t2_values));
 
   for (int i = 0; i < char_waypoints_height; ++i) {
     t3_values[i] = acosf(sq(x_values[i])/31500.0 + sq(y_values[i])/31500.0 + sq(z_values[i])/31500.0 - ((11.0*z_values[i])/1575.0) - (857.0/1260.0));                // [radians]
     t3_values[i] = t3_values[i]*180/3.1415;   // [degrees];
   }
+  Serial.println("Theta 3 Values");
+  printVector(t3_values, VectorLength(t3_values));
+
   Serial.println("Theta Values: ");
   printVector(t1_values, VectorLength(t1_values));
   printVector(t2_values, VectorLength(t2_values));
@@ -764,6 +938,24 @@ void numToPulselength(int index_length, int char_index[], float points[][4]){
   printVector(pl3_values, VectorLength(pl3_values));
   
   ////////////////////////////////////////////
+
+  ////// Move Robot Arm //////
+  Serial.println("Shift off board:");
+  int shift_off_board = off_board + 288;
+  Serial.println(shift_off_board);
+  pwm.setPWM(0, 0, 288 + off_board); // The 40 is added to allow the robot arm to move away from the whiteboard.
+  pwm.setPWM(1, 0, pl2_values[0]);
+  pwm.setPWM(2, 0, pl3_values[0]);
+  delay(3000);
+
+  for (int i = 1; i < char_waypoints_height; ++i) {
+    pwm.setPWM(0, 0, 288); 
+    pwm.setPWM(1, 0, pl2_values[i]);
+    pwm.setPWM(2, 0, pl3_values[i]);
+    delay(100);
+  }
+  pwm.setPWM(0, 0, 288 + off_board); // The 40 is added to allow the robot arm to move away from the whiteboard.
+  //////////////////////////
 }
 //////////////////////////////
 
@@ -873,4 +1065,18 @@ void interpretResult(double result, int resultVector[], int numDigits) {
     } 
 
   }
+}
+
+void floatToVector(float num, char charVector[], int numDigits) {
+  // Convert the floating-point number to a string
+  String strNum = String(num, 6);  // Adjust the precision as needed
+
+  // Copy the characters into the charVector
+  strNum.toCharArray(charVector, numDigits);
+
+  // Uncomment the following lines if you want to print the result
+  Serial.print("Original float: ");
+  Serial.println(num, 6);
+  Serial.print("Converted vector: ");
+  Serial.println(charVector);
 }
