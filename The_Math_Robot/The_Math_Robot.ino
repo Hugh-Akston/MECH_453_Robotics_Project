@@ -338,6 +338,67 @@ if (Serial.available() > 0) {
 
     String input = Serial.readStringUntil('\n'); 
     input.trim(); // Remove leading and trailing whitespaces 
+    String inputCheck = "9+10";
+
+    Serial.print("Original Input:");
+    Serial.println(input);
+
+    bool joke = false;
+
+    if (input.compareTo(inputCheck) == 0) {
+         joke = true;
+         Serial.println("I hope you like jokes ;)");
+         float shift_distance = 30.0;
+         float x_shift = 0.0;
+         Serial.print("x_shift");
+         Serial.println(x_shift);
+
+         Serial.println("The number is 2");
+         ////// Create char_index vector //////
+         int index_length = VectorLength(two_index);
+         int char_index[index_length] = {0};
+         copyVectorInt6(two_index, char_index);
+         ////// Draw the number //////
+         numToPulselength(index_length, char_index, points, x_shift);
+
+         Serial.println("The number is 1");
+         x_shift = shift_distance;
+         ////// Create char_index vector //////
+         index_length = VectorLength(one_index);
+         char_index[index_length] = {0};
+         copyVectorInt3(one_index, char_index);
+         ////// Draw the number //////
+         numToPulselength(index_length, char_index, points, x_shift);
+
+         input = ' ';
+    }
+
+    // switch (input) {
+    //   case '9+10':
+    //     {float shift_distance = 30.0;
+    //     float x_shift = shift_distance;
+    //     Serial.print("x_shift");
+    //     Serial.println(x_shift);}
+
+    //     {Serial.println("The number is 2");
+    //     ////// Create char_index vector //////
+    //     int index_length = VectorLength(two_index);
+    //     int char_index[index_length] = {0};
+    //     copyVectorInt6(two_index, char_index);
+    //     ////// Draw the number //////
+    //     numToPulselength(index_length, char_index, points, x_shift);}
+
+    //     {Serial.println("The number is 1");
+    //     ////// Create char_index vector //////
+    //     int index_length = VectorLength(one_index);
+    //     int char_index[index_length] = {0};
+    //     copyVectorInt3(one_index, char_index);
+    //     ////// Draw the number //////
+    //     numToPulselength(index_length, char_index, points, x_shift);
+
+    //     input = ' ';}
+    //   break;
+    // }
 
     // Evaluate the mathematical expression 
     double result = evaluateExpression(input); 
@@ -375,8 +436,11 @@ if (Serial.available() > 0) {
       Serial.print("x_shift");
       Serial.println(x_shift);
       switch (charVector[i]) {
+        
         case '+':
-
+        if (joke == true){
+          break;
+        }
         {Serial.println("+ sign");
         ////// Create char_index vector //////
         int index_length = VectorLength(plus_index);
@@ -387,6 +451,9 @@ if (Serial.available() > 0) {
         break;}
 
         case '-':
+        if (joke == true){
+          break;
+        }
         {Serial.println("- sign");
         ////// Create char_index vector //////
         int index_length = VectorLength(minus_index);
@@ -397,6 +464,9 @@ if (Serial.available() > 0) {
         break;}
 
         case '.':
+        if (joke == true){
+          break;
+        }
         {Serial.println(".");
         ////// Create char_index vector //////
         int index_length = VectorLength(decimal_index);
@@ -407,6 +477,9 @@ if (Serial.available() > 0) {
         break;}
 
         case '0':
+        if (joke == true){
+          break;
+        }
         {Serial.println("The number is 0");
         ////// Create char_index vector //////
         int index_length = VectorLength(zero_index);
@@ -417,6 +490,9 @@ if (Serial.available() > 0) {
         break;}
 
         case '1':
+        if (joke == true){
+          break;
+        }
         {Serial.println("The number is 1");
         ////// Create char_index vector //////
         int index_length = VectorLength(one_index);
@@ -427,7 +503,10 @@ if (Serial.available() > 0) {
         break;}
 
         case '2':
-        {Serial.println("The number is 0");
+        if (joke == true){
+          break;
+        }
+        {Serial.println("The number is 2");
         ////// Create char_index vector //////
         int index_length = VectorLength(two_index);
         int char_index[index_length] = {0};
@@ -437,6 +516,9 @@ if (Serial.available() > 0) {
         break;}
 
         case '3':
+        if (joke == true){
+          break;
+        }
         {Serial.println("The number is 3");
         ////// Create char_index vector //////
         int index_length = VectorLength(three_index);
@@ -447,6 +529,9 @@ if (Serial.available() > 0) {
         break;}
 
         case '4':
+        if (joke == true){
+          break;
+        }
         {Serial.println("The number is 4");
         ////// Create char_index vector //////
         int index_length = VectorLength(four_index);
@@ -457,6 +542,9 @@ if (Serial.available() > 0) {
         break;}
 
         case '5':
+        if (joke == true){
+          break;
+        }
         {Serial.println("The number is 5");
         ////// Create char_index vector //////
         int index_length = VectorLength(five_index);
@@ -467,6 +555,9 @@ if (Serial.available() > 0) {
         break;}
 
         case '6':
+        if (joke == true){
+          break;
+        }
         {Serial.println("The number is 6");
         ////// Create char_index vector //////
         int index_length = VectorLength(six_index);
@@ -477,6 +568,9 @@ if (Serial.available() > 0) {
         break;}
 
         case '7':
+        if (joke == true){
+          break;
+        }
         {Serial.println("The number is 7");
         ////// Create char_index vector //////
         int index_length = VectorLength(seven_index);
@@ -487,6 +581,9 @@ if (Serial.available() > 0) {
         break;}
 
         case '8':
+        if (joke == true){
+          break;
+        }
         {Serial.println("The number is 8");
         ////// Create char_index vector //////
         int index_length = VectorLength(eight_index);
@@ -497,6 +594,9 @@ if (Serial.available() > 0) {
         break;}
 
         case '9':
+        if (joke == true){
+          break;
+        }
         {Serial.println("The number is 9");
         ////// Create char_index vector //////
         int index_length = VectorLength(nine_index);
@@ -514,7 +614,7 @@ if (Serial.available() > 0) {
     delete[] resultVector; 
     Serial.println("Enter a mathematical expression:"); 
 
-  } 
+  }
 //   // send data only when you receive data: 
 //   if (Serial.available() > 0) { 
 //     // read the incoming byte: 
@@ -979,7 +1079,7 @@ double evaluateExpression(String expression) {
       result -= operand; 
     } else { 
       Serial.println("Invalid operator");
-      return 0; 
+      return ;//0; 
     } 
 
   } 
