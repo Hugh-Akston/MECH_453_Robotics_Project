@@ -1,6 +1,8 @@
-// Written By: Dr. Eric Markvicka
-// Modified By: Luke Freyhof
-// Purpose: This file serves as a guideline for implementing inverse kinematics in the robot arm for MECH 453/853
+// Inspired By Code From: Dr. Eric Markvicka
+// Written/Modified By: Luke Freyhof, Elliott Rankin, and Christian Dahlman
+// The Math Robot
+// December 11, 2023
+// MECH 453/853
 
 #include <Wire.h>
 #include <math.h>
@@ -117,23 +119,6 @@ void setup() {
 
   delay(10);
 
-  // Move the robotic arm to the reference configuration
-  // pwm.setPWM(0, 0, map(0,d0_min,d0_max,J0_min,J0_max));
-  // pwm.setPWM(1, 0, map(0,d1_min,d1_max,J1_min,J1_max));
-  // pwm.setPWM(2, 0, map(0,d2_min,d2_max,J2_min,J2_max));
-  // pwm.setPWM(3, 0, grip);
-
-  // float points_width = ArrayWidth(points);
-  // float points_height = ArrayHeight(points);
-  // float char_index_size = VectorLength(two_index);
-
-  // Serial.print("Char_Index_Size: ");
-  // Serial.println(char_index_size);
-  // Serial.print("Point_Width: ");
-  // Serial.println(points_width);
-  // Serial.print("Point_Height: ");
-  // Serial.println(points_height);
-
   int points_height = ArrayHeight(points);
   int points_width = ArrayWidth(points);
   int two_length = VectorLength(two_index);
@@ -187,146 +172,6 @@ void setup() {
   printVectorInt(char_index, index_length);
   //////////////////////////////////////
 
-  // numToPulselength(index_length, char_index, points, x_shift);
-
-  // ////// Char Point Setup //////
-  // float char_points[index_length][3] = {0.0};
-  // // // printArray3(char_points, index_length);
-  // // for (int i = 0; i < index_length; ++i) {
-  // //   // newVector[i] = originalVector[i];
-  // //   char_points[i][0] = points[char_index[i] - 1][1];
-  // //   Serial.println(" ");
-  // //   Serial.println(char_index[i]);
-  // //   Serial.println(points[char_index[i]][1]);
-  // //   char_points[i][1] = points[char_index[i] - 1][2];
-  // //   char_points[i][2] = points[char_index[i] - 1][3];
-  // // }
-  // // Serial.println("New char_points array: ");
-  // // printArray3(char_points, index_length);
-  // //////////////////////////////
-
-  // // Test charPointSetup
-  // charPointSetup(char_points, char_index, points, index_length);
-  // //
-
-
-  // ////// Waypoint Array Setup //////
-  // int n_wp = 15;
-  // int char_waypoints_height = index_length + (n_wp - 2)*(index_length - 1);
-  // float char_waypoints[char_waypoints_height][3] = {0.0};
-  // Serial.println(char_waypoints_height);
-  // printArray3(char_waypoints, char_waypoints_height);
-  // for (int i = 0; i < index_length; ++i) {
-  //   // newVector[i] = originalVector[i];
-  //   char_waypoints[i + (i)*(n_wp - 2)][0] = char_points[i][0];
-  //   char_waypoints[i + (i)*(n_wp - 2)][1] = char_points[i][1];
-  //   char_waypoints[i + (i)*(n_wp - 2)][2] = char_points[i][2];
-  // }
-  // printArray3(char_waypoints, char_waypoints_height);
-
-  // Serial.println(char_waypoints[0][0]);
-  // //////////////////////////////////
-
-  // ////// Waypoint Array Assignment //////
-  // float x_increment[index_length - 1] = {0.0};
-  // float y_increment[index_length - 1] = {0.0};
-  // float z_increment[index_length - 1] = {0.0};
-  // for (int i = 0; i < (index_length - 1); ++i) {
-  //   x_increment[i] = (char_points[i + 1][0] - char_points[i][0])/(n_wp - 1);
-  //   y_increment[i] = (char_points[i + 1][1] - char_points[i][1])/(n_wp - 1);
-  //   z_increment[i] = (char_points[i + 1][2] - char_points[i][2])/(n_wp - 1);
-  // }
-  // for (int i = 0; i < (index_length - 1); ++i) {
-  //   for (int j = 0; j < (n_wp - 1); ++j) {
-  //     char_waypoints[i + (i)*(n_wp - 2) + j][0] = char_points[i][0] + j*(x_increment[i]);
-  //   }
-  //   for (int j = 0; j < (n_wp - 1); ++j) {
-  //     char_waypoints[i + (i)*(n_wp - 2) + j][1] = char_points[i][1] + j*(y_increment[i]);
-  //   }
-  //   for (int j = 0; j < (n_wp - 1); ++j) {
-  //     char_waypoints[i + (i)*(n_wp - 2) + j][2] = char_points[i][2] + j*(z_increment[i]);
-  //   }
-  // }
-  // printVector(x_increment, VectorLength(x_increment));
-  // printArray3(char_waypoints, char_waypoints_height);
-  // // Serial.println(char_points[0][0] + 1*(x_increment[0]));
-  // // Serial.println(char_waypoints[1][0]);
-  // ///////////////////////////////////////
-
-  // ////// IK of char_waypoints //////
-  // float x_values[char_waypoints_height] = {0.0};
-  // float y_values[char_waypoints_height] = {0.0};
-  // float z_values[char_waypoints_height] = {0.0};
-  // float t3_values[char_waypoints_height] = {0.0};
-  // float t2_values[char_waypoints_height] = {0.0};
-  // float t1_values[char_waypoints_height] = {0.0};
-
-  // for (int i = 0; i < char_waypoints_height; ++i) {
-  //   x_values[i] = char_waypoints[i][0];
-  // }
-  // for (int i = 0; i < char_waypoints_height; ++i) {
-  //   y_values[i] = char_waypoints[i][1];
-  // }
-  // for (int i = 0; i < char_waypoints_height; ++i) {
-  //   z_values[i] = char_waypoints[i][2];
-  // }
-  
-  // printVector(x_values, VectorLength(x_values));
-
-  // for (int i = 0; i < char_waypoints_height; ++i) {
-  //   t1_values[i] = atan2(y_values[i], x_values[i]);                // [radians]
-  //   t1_values[i] = t1_values[i]*180/3.1415;   // [degrees];
-  // }
-  
-  // printVector(t1_values, VectorLength(t1_values));
-
-  // for (int i = 0; i < char_waypoints_height; ++i) {
-  //   t2_values[i] = atan2(z_values[i] - 110, sqrt(sq(x_values[i]) + sq(y_values[i]))) + acos((sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]) - 220*z_values[i] + 625)/(210*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i] - 110))));                // [radians]
-  //   // t2_values[i] = atan2(z_values[i] - l1, sqrt(sq(x_values[i]) + sq(y_values[i])) + acos((sq(l1) - 2*l1*z_values[i] + sq(l2) - sq(l3) + sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]))/(2*l2*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(l1 - z_values[i]))))); // This is the inverse kinematics formula that Dr. M had in his path planning example code.
-  //   t2_values[i] = t2_values[i]*180/3.1415;   // [degrees];
-  // }
-
-  // for (int i = 0; i < char_waypoints_height; ++i) {
-  //   t3_values[i] = acosf(sq(x_values[i])/31500.0 + sq(y_values[i])/31500.0 + sq(z_values[i])/31500.0 - ((11.0*z_values[i])/1575.0) - (857.0/1260.0));                // [radians]
-  //   t3_values[i] = t3_values[i]*180/3.1415;   // [degrees];
-  // }
-  // Serial.println("Theta Values: ");
-  // printVector(t1_values, VectorLength(t1_values));
-  // printVector(t2_values, VectorLength(t2_values));
-  // printVector(t3_values, VectorLength(t3_values));
-
-  // //////////////////////////////////
-
-  // ////// Convert Angles to Pulselengths //////
-  // float pl1_values[char_waypoints_height] = {0.0};
-  // float pl2_values[char_waypoints_height] = {0.0};
-  // float pl3_values[char_waypoints_height] = {0.0};
-  // for (int i = 0; i < char_waypoints_height; ++i) {
-  //   // pwm.setPWM(0, 0, map(d1,d0_min,d0_max,J0_min,J0_max));
-  //   pl1_values[i] = map(t1_values[i],d0_min,d0_max,J0_min,J0_max);
-  //   pl2_values[i] = map(t2_values[i],d1_min,d1_max,J1_min,J1_max);
-  //   pl3_values[i] = map(t3_values[i],d2_min,d2_max,J2_min,J2_max);
-  // }
-  // Serial.println("Pulse Length Values: ");
-  // printVector(pl1_values, VectorLength(pl1_values));
-  // printVector(pl2_values, VectorLength(pl2_values));
-  // printVector(pl3_values, VectorLength(pl3_values));
-  
-  // ////////////////////////////////////////////
-
-  // ////// Move Robot Arm //////
-  // pwm.setPWM(0, 0, pl1_values[0]);
-  // pwm.setPWM(1, 0, pl2_values[0]);
-  // pwm.setPWM(2, 0, pl3_values[0]);
-  // delay(3000);
-
-  // for (int i = 1; i < char_waypoints_height; ++i) {
-  //   pwm.setPWM(0, 0, pl1_values[i]);
-  //   pwm.setPWM(1, 0, pl2_values[i]);
-  //   pwm.setPWM(2, 0, pl3_values[i]);
-  //   delay(50);
-  // }
-  ////////////////////////////
   Serial.println(" ");
   Serial.println("Setup finished");
 }
@@ -373,33 +218,6 @@ if (Serial.available() > 0) {
          input = ' ';
     }
 
-    // switch (input) {
-    //   case '9+10':
-    //     {float shift_distance = 30.0;
-    //     float x_shift = shift_distance;
-    //     Serial.print("x_shift");
-    //     Serial.println(x_shift);}
-
-    //     {Serial.println("The number is 2");
-    //     ////// Create char_index vector //////
-    //     int index_length = VectorLength(two_index);
-    //     int char_index[index_length] = {0};
-    //     copyVectorInt6(two_index, char_index);
-    //     ////// Draw the number //////
-    //     numToPulselength(index_length, char_index, points, x_shift);}
-
-    //     {Serial.println("The number is 1");
-    //     ////// Create char_index vector //////
-    //     int index_length = VectorLength(one_index);
-    //     int char_index[index_length] = {0};
-    //     copyVectorInt3(one_index, char_index);
-    //     ////// Draw the number //////
-    //     numToPulselength(index_length, char_index, points, x_shift);
-
-    //     input = ' ';}
-    //   break;
-    // }
-
     // Evaluate the mathematical expression 
     double result = evaluateExpression(input); 
 
@@ -435,7 +253,7 @@ if (Serial.available() > 0) {
       float x_shift = shift_distance*i;
       Serial.print("x_shift");
       Serial.println(x_shift);
-      switch (charVector[i]) {
+      switch (charVector[i]) { // This switch/case structure decides which decides which symbols to draw.
         
         case '+':
         if (joke == true){
@@ -615,111 +433,10 @@ if (Serial.available() > 0) {
     Serial.println("Enter a mathematical expression:"); 
 
   }
-//   // send data only when you receive data: 
-//   if (Serial.available() > 0) { 
-//     // read the incoming byte: 
-//     incomingByte = Serial.read();
-
-//     // say what you got: 
-//     Serial.println(incomingByte);
-
-//     // print the current x, y, z value
-//     Serial.print("x: "); Serial.print(x);
-//     Serial.print(", y: "); Serial.print(y);
-//     Serial.print(", z: "); Serial.println(z);
-//     switch (incomingByte) {
-//       case 'q':  // move in x
-//         x += 5;
-//         break;
-//       case 'a':
-//         x -= 5;
-//         break;
-        
-//       case 'w':  // move in y
-//         y += 5;
-//         break;
-//       case 's':
-//         y -= 5;
-//         break; 
-        
-//       case 'e':  // move in z
-//         z += 5;
-//         break;
-//       case 'd':
-//         z -= 5;
-//         break;
-
-//       case 'r':  // open/close the end effector
-//         grip += 5;
-//         break;
-//       case 'f':
-//         grip -= 5;
-//         break;   
-        
-//       case 'h':  // move the robot to the reference configuration 
-//         x = 255; y = 0; z = 110; grip = 400;
-//         break;  
-//     }
-//     // print the modified x, y, z value
-//     Serial.print("x: "); Serial.print(x);
-//     Serial.print(", y: "); Serial.print(y);
-//     Serial.print(", z: "); Serial.println(z);
-
-
-//     /////////////// Compute the inverse kinematics of the robotic arm ///////////////
-//     ////// inverse kinematics (joint 1) //////
-//     t1 = atan2(y, x);                // [radians]
-//     d1 = t1*180/3.1415;   // [degrees]
-//     Serial.print("t1: "); Serial.println(d1);
-//     // map degrees to pulselength and send value to robotic arm
-//     pwm.setPWM(0, 0, map(d1,d0_min,d0_max,J0_min,J0_max));    
-
-//     ////// inverse kinematics (joint 2) //////
-//     t2 = atan2(z - 110, sqrt(sq(x) + sq(y))) + acos((sq(x) + sq(y) + sq(z) - 220*z + 625)/(210*sqrt(sq(x) + sq(y) + sq(z - 110))));                // [radians]
-//     d2 = t2*180/3.1415;   // [degrees]
-//     Serial.print("t2: "); Serial.println(d2);
-//     // map degrees to pulselength and send value to robotic arm
-//     pwm.setPWM(1, 0, map(d2,d1_min,d1_max,J1_min,J1_max));
-
-//     ////// inverse kinematics (joint 3) //////
-//     t3 = acosf(sq(x)/31500.0 + sq(y)/31500.0 + sq(z)/31500.0 - ((11.0*z)/1575.0) - (857.0/1260.0));     // [radians]
-//     d3 = t3*180.0/3.1415;   // [degrees]
-//     Serial.print("t3: "); Serial.println(t3);
-//     // map degrees to pulselength and send value to robotic arm
-//     pwm.setPWM(2, 0, map(d3,d2_min,d2_max,J2_min,J2_max));
-
-//     /////// inverse kinematics (joint 3) //////
-//     // send pulselength value to the end effector
-//     pwm.setPWM(3, 0, grip);
-//   }
-
-// // void copy_array(int destination_index[], int source_array[], int source_array_length) {
-// //     memcpy(destination_array, source_array, sizeof(source_array));
-// // }
-
-// // copy_array(char_index, two_index, (sizeof(two_index) / sizeof(two_index[0])))
-// //   // Serial.println(points);
-  
-// //   for(int i = 0; i < 6; i++)
-// // {
-// //   Serial.println(char_index[i]);
-// // }
-// //   //Serial.println("two_index: "); Serial.println(two_index);
-// //   Serial.println("char_index_size: ");  Serial.println(char_index_size);
-
-// // float char_point_setup(points[][], char_index[], char_index_size) {
-// //   float char_points[char_index_size][3];
-// //   for (int i{0}; i < char_index_size; i++) {
-// //     char_points[i][0] = points[char_index[i]][1];
-// //     char_points[i][1] = points[char_index[i]][2];
-// //     char_points[i][2] = points[char_index[i]][3];
-// //   }
-// //   return char_points;
-// // }
-
 
 }
 
+////// Copy Array Functions //////
 void copyArray4(float originalArray[][4], float newArray[][4], int array_height) { // This copies an array that is 4 elements wide
   for (int i = 0; i < array_height; ++i) {
     for (int j = 0; j < 4; ++j) {
@@ -735,7 +452,9 @@ void copyArray4to3(float originalArray[][4], float newArray[][3], int array_heig
     }
   }
 }
+//////////////////////////////////
 
+////// Copy Vector Functions //////
 void copyVector(float originalVector[], float newVector[]) { // This function decides which copyVector function to use based on the length of the input vector.
   // switch // Use a switch case statement to determine which copyVector function to use based on the length of the input vector.
   // case
@@ -843,9 +562,9 @@ void copyVectorInt2(int originalVector[2], int newVector[2]) { // This copies a 
     newVector[i] = originalVector[i];
   }
 }
+///////////////////////////////////
 
-//////////////////////////////////////////
-
+////// Print Vector and Array Functions //////
 void printVector(float vector[], int size) {
   for (int i = 0; i < size; ++i) {
     Serial.print(vector[i]);
@@ -883,14 +602,9 @@ void printArray3(float array[][3], int array_height) {
   }
   Serial.println();
 }
+//////////////////////////////////////////////
 
-  // ////// Create char_index vector //////
-  // int index_length = VectorLength(two_index);
-  // int char_index[index_length] = {0};
-  // copyVectorInt6(two_index, char_index);
-  // printVectorInt(char_index, index_length);
-  // //////////////////////////////////////
-
+////// Functions for drawing numbers and working with the mathematical expressions //////
 ////// numToPulselength //////
 void numToPulselength(int index_length, int char_index[], float points[][4], float x_shift){
     ////// Char Point Setup //////
@@ -1180,3 +894,4 @@ void floatToVector(float num, char charVector[], int numDigits) {
   Serial.print("Converted vector: ");
   Serial.println(charVector);
 }
+/////////////////////////////////////////////////////////////////////////////////////////
