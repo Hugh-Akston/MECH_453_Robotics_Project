@@ -708,22 +708,21 @@ void numToPulselength(int index_length, int char_index[], float points[][4], flo
   printVector(z_values, VectorLength(z_values));
 
   for (int i = 0; i < char_waypoints_height; ++i) {
-    t1_values[i] = atan2(y_values[i], x_values[i]);                // [radians]
+    t1_values[i] = ; // Put your inverse kinematics equation here!  I redacted it from this file because I didn't want to publish homework answers. In radians.
     t1_values[i] = t1_values[i]*180/3.1415;   // [degrees];
   }
   Serial.println("Theta 1 Values");
   printVector(t1_values, VectorLength(t1_values));
 
   for (int i = 0; i < char_waypoints_height; ++i) {
-    t2_values[i] = atan2(z_values[i] - 110, sqrt(sq(x_values[i]) + sq(y_values[i]))) + acos((sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]) - 220*z_values[i] + 625)/(210*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i] - 110))));                // [radians]
-    // t2_values[i] = atan2(z_values[i] - l1, sqrt(sq(x_values[i]) + sq(y_values[i])) + acos((sq(l1) - 2*l1*z_values[i] + sq(l2) - sq(l3) + sq(x_values[i]) + sq(y_values[i]) + sq(z_values[i]))/(2*l2*sqrt(sq(x_values[i]) + sq(y_values[i]) + sq(l1 - z_values[i]))))); // This is the inverse kinematics formula that Dr. M had in his path planning example code.
+    t2_values[i] = ; // Put your inverse kinematics equation here!  I redacted it from this file because I didn't want to publish homework answers. In radians.
     t2_values[i] = t2_values[i]*180/3.1415;   // [degrees];
   }
   Serial.println("Theta 2 Values");
   printVector(t2_values, VectorLength(t2_values));
 
   for (int i = 0; i < char_waypoints_height; ++i) {
-    t3_values[i] = acosf(sq(x_values[i])/31500.0 + sq(y_values[i])/31500.0 + sq(z_values[i])/31500.0 - ((11.0*z_values[i])/1575.0) - (857.0/1260.0));                // [radians]
+    t3_values[i] = ; // Put your inverse kinematics equation here!  I redacted it from this file because I didn't want to publish homework answers. In radians.
     t3_values[i] = t3_values[i]*180/3.1415;   // [degrees];
   }
   Serial.println("Theta 3 Values");
